@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Alireza Miryazdi's resume">
-    <meta name="keywords" content="Alireza Miryazdi, resume">
+    <meta name="keywords" content="Alireza Miryazdi, resume, CV">
     <meta name="author" content="Alireza Miryazdi">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha512-z4OUqw38qNLpn1libAN9BsoDx6nbNFio5lA6CuTp9NlK83b89hgyCVq+N5FdBJptINztxn1Z3SaKSKUS5UP60Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="static/css/main.css">
-    <script type="text/javascript" src="./static/js/jquery.js"></script>
-    <script type="text/javascript" src="./static/js/animate.js"></script>
     <script type="text/javascript" src="./static/js/main.js?nocache"></script>
     <title>Alireza Miryazdi</title>
 </head>
@@ -24,11 +24,11 @@
     <div id="themes">
         <label class="day" title="Light mode">
             <input type="radio" checked="checked" name="radio" id="day">
-            <span class="checkmark">light</span>
+            <span class="checkmark">day</span>
         </label>
         <label class="night" title="Dark mode">
             <input type="radio" name="radio" id="night">
-            <span class="checkmark">dark</span>
+            <span class="checkmark">night</span>
         </label>
     </div>
     <div class="main_container">
@@ -74,7 +74,7 @@
             </div>
             <div class="footer">
                 <div id="page_2">Contact</div>
-                <div id="page_3">Projects</div>
+                <div id="page_3">Experience</div>
             </div>
             <div class="horizontal_scrollbar_r">
                 <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
@@ -84,15 +84,52 @@
             </div>
             <div class="second_page">
                 <div class="main">
-                    <a href="https://github.com/Xosrov" target="_blank" id="github">Github</a>
-                    <a href="https://stackoverflow.com/users/7764138/xosrov" target="_blank" id="stackoverflow">Stackoverflow</a>
-                    <a href="https://quera.ir/profile/seyed.alireza.miryazdi" target="_blank" id="quera">Quera</a>
                     <a href="mailto:seyed.alireza.miryazdi@gmail.com" target="_blank" id="email">Email</a>
+                    <a href="https://github.com/Xosrov" target="_blank" id="github">Github</a>
+                    <a href="https://quera.ir/profile/seyed.alireza.miryazdi" target="_blank" id="linkedin">LinkedIn</a>
+                    <a href="https://stackoverflow.com/users/7764138/xosrov" target="_blank" id="stackoverflow">Stackoverflow</a>
                 </div>
             </div>
             <div class="third_page">
+                <!-- logos with the help of photopea -->
                 <div class="main">
-                    In progress
+                    <section>
+                        <img src="static/images/linux_void_dwm.svg">
+                        <p>
+                            Comfortable with linux and common operations using the terminal with basic knowledge of Bash. Currently using Void Linux & DWM window manager.
+                        </p>
+                    </section>
+                    <section>
+                        <img src="static/images/python_requests_bs4_regex.svg">
+                        <p>
+                            Very proficient with data scraping web automation with Python's <i>requests</i> library. Experience with data extraction using <i>BeautifulSoup</i> and regex, as well as data storage is common formats like json and SQLite.
+                        </p>
+                    </section>
+                    <section>
+                        <img src="static/images/cpp_js_py.svg">
+                        <p>
+                            Experience with IPC (zmq) to communicate between C++/Python to offload intensive tasks like multithreaded fuzzy searching a large database to C++. Knowledge of basic HTML/JS functions to communicate with users. 
+                            <a href="https://github.com/Xosrov/EyeDex">EyeDex</a>
+                        </p>
+                    </section>
+                    <section>
+                        <img src="static/images/go_pion_gstreamer.svg">
+                        <p>
+                            Knowledge of WebRTC, using <a href="https://github.com/pion/webrtc">Pion</a> to initiate WebRTC video/audio communications to transfer RTP packets generated from GStreamer/Ffmpeg CLI.
+                        </p>
+                    </section>
+                    <section>
+                        <img src="static/images/c_go_gst.svg">
+                        <p>
+                            WebRTC live-streaming using GStreamer in C. Basic knowledge of common audio/video encoders (H264/VP9/Opus) and creating dynamic GStreamer pipelines to allow for dynamic bitrates and on-the-fly stream parameter changes.
+                        </p>
+                    </section>
+                    <section>
+                        <img src="static/images/sfml_cpp.svg">
+                        <p>
+                            Basic game developement experience using the SFML library in C++, with more focus on object-oriented programming that comes with multi-asset projects like this.
+                        </p>
+                    </section>
                 </div>
             </div>
         </div>
