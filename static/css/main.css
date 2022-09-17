@@ -83,8 +83,7 @@ a {
     height: 83vh;
     overflow: hidden;
     border-radius: 1vh;
-    box-shadow: 0 0 4.5vh -1vh #000;
-    background-color: var(--main_bg_2)
+    box-shadow: 0 0 4.5vh -2.5vh #000;
 }
 
 .image {
@@ -160,7 +159,7 @@ a {
 
 .basic_info_name {
     font-family: "KellySlab";
-    z-index: 4;
+    z-index: 6;
     opacity: 100%;
     font-size: 6vh;
     color: var(--other);
@@ -172,7 +171,7 @@ a {
 
 .basic_info_short {
     font-family: "KellySlab";
-    z-index: 4;
+    z-index: 6;
     opacity: 100%;
     position: relative;
     top: 1.0vh;
@@ -185,6 +184,7 @@ a {
 }
 
 .first_page {
+    z-index: 1;
     position: absolute;
     display: flex;
     top: 0;
@@ -213,7 +213,7 @@ a {
     width: 60vh;
     background-color: var(--main_bg_1);
     color: var(--text_1);
-    box-shadow: 0 0 2.5vh -1.5vh #000 inset;
+    box-shadow: 0 0 2.5vh -1.5vh #000;
     overflow-y: auto;
     overflow-x: hidden
 }
@@ -253,6 +253,7 @@ a {
 }
 
 .footer {
+    z-index: 6;
     color: var(--text_1);
     position: absolute;
     bottom: 0;
@@ -345,7 +346,7 @@ a {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 0 1vh -.5vh #000 inset;
+    z-index: 5;
 }
 
 .second_page>.main {
@@ -354,9 +355,10 @@ a {
     justify-content: center;
     align-items: center;
     background-color: var(--main_bg_2);
-    box-shadow: 0 0 2.5vh -1.5vh #000 inset;
+    border-radius: 1vh;
+    box-shadow: 0 0 2.5vh -1.8vh #000;
     overflow-y: auto;
-    width: inherit
+    width: inherit;
 }
 
 .second_page>.main>a {
@@ -440,10 +442,11 @@ a {
 
 .third_page>.main {
     background-color: var(--main_bg_1);
-    box-shadow: 0 0 2.5vh -1.1vh #000 inset;
+    box-shadow: 0 0 1.5vh -1vh #000 inset;
     overflow-y: auto;
     width: inherit;
     position: relative;
+    border-radius: 1vh;
     top: 3vh;
     height: 70%;
 }
@@ -465,7 +468,7 @@ a {
 
 .third_page>.main>section>p {
     background-color: var(--main_bg_2);
-    box-shadow: 0 0 2.5vh -1vh #000;
+    box-shadow: 0 0 2.5vh -1.5vh #000;
     border-radius: 0.5vh 0 0 0.5vh;
     padding: 0.5vh;
     color: var(--text_1);
