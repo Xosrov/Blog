@@ -119,6 +119,7 @@ function updatePage() {
         animating = true;
         if (page == 1) {
             page = 2
+            $(".vertical_scrollbar > *").css("background-color", "var(--other)");
             $(".first_page").css("left", -baseWidth + "vh");
             $("#page_2").css("right", baseWidth / 2 - 3 + "vh");
             $("#page_2").html("Back");
@@ -130,6 +131,7 @@ function updatePage() {
             slide("#page_2");
         } else {
             page = 1;
+            $(".vertical_scrollbar > *").css("background-color", "var(--main_bg_2)");
             $("#page_2").css("right", "2vh");
             $("#page_2").html("Contact");
             $("#page_3").css("left", "2vh");
@@ -146,6 +148,7 @@ function updatePage() {
         animating = true;
         if (page == 1) {
             page = 3
+            $(".vertical_scrollbar > *").css("background-color", "var(--other)");
             $(".first_page").css("left", baseWidth + "vh");
             $("#page_3").css("left", baseWidth / 2 - 3 + "vh");
             $("#page_3").html("Back");
@@ -157,6 +160,7 @@ function updatePage() {
             slide("#page_3");
         } else {
             page = 1;
+            $(".vertical_scrollbar > *").css("background-color", "var(--main_bg_2)");
             $("#page_3").css("left", "2vh");
             $("#page_3").html("Experience");
             $("#page_2").css("right", "2vh");
@@ -191,11 +195,9 @@ function verticalAnim(targets, scale) {
         duration: 700,
         easing: 'cubicBezier(0.25, 0.1, 0.25, 1.0)',
         delay: anime.stagger(20, {
-            from: 'center'
-        }),
-        complete: function(a) {
-          animating = false;
-        }
+            from: 'center',
+            easing: 'easeInCirc'
+        })
     });
 }
 
