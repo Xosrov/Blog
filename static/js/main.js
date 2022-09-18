@@ -7,19 +7,20 @@ let cssVariables = [
     "--other",
 ]
 let nightColors = [
-    "#57838D",
-    "#B4C9C7",
-    "#270722",
-    "#445A67",
-    "#DC965A",
+  "#034078",
+  "#1282a2",
+  "#0a1128",
+  "#001f54",
+  "#fefcfb",
 ];
 let dayColors = [
-    "#FFFFFF",
-    "#9DB5B2",
-    "#3B413C",
-    "#94D1BE",
-    "#DAF0EE",
+  "#cbf3f0",
+  "#ffffff",
+  "#2ec4b6",
+  "#ffbf69",
+  "#ff9f1c",
 ];
+let animating = false;
 
 function isOnScreen(element) {
     var curPos = element.offset();
@@ -65,6 +66,7 @@ function updatePage() {
         }
     });
     $(".more_info_container").hover(function () {
+        if (animating) return;
         verticalAnim('.vertical_scrollbar div', 80);
         if (page != 1)
             $(".vertical_scrollbar > *").css("background-color", "var(--other)");
@@ -75,6 +77,7 @@ function updatePage() {
         $(".vertical_scrollbar > *").css("background-color", "var(--main_bg_2)");
     });
     $("#page_2").hover(function () {
+        if (animating) return;
         if (page == 1) {
             $(".second_page").css("right", -baseWidth + 2 + "vh");
             $(".first_page").css("left", "-2vh");
@@ -83,6 +86,7 @@ function updatePage() {
             $(".second_page").css("right", "-2vh");
         }
     }, function () {
+        if (animating) return;
         if (page == 1) {
             $(".second_page").css("right", -baseWidth + "vh");
             $(".first_page").css("left", "0");
@@ -92,6 +96,7 @@ function updatePage() {
         }
     });
     $("#page_3").hover(function () {
+        if (animating) return;
         if (page == 1) {
             $(".third_page").css("left", -baseWidth + 2 + "vh");
             $(".first_page").css("left", "2vh");
@@ -100,6 +105,7 @@ function updatePage() {
             $(".first_page").css("left", baseWidth - 2 + "vh");
         }
     }, function () {
+        if (animating) return;
         if (page == 1) {
             $(".third_page").css("left", -baseWidth + "vh");
             $(".first_page").css("left", "0");
@@ -109,6 +115,8 @@ function updatePage() {
         }
     });
     $("#page_2").click(function () {
+        if (animating) return;
+        animating = true;
         if (page == 1) {
             page = 2
             $(".first_page").css("left", -baseWidth + "vh");
@@ -121,6 +129,7 @@ function updatePage() {
             horizontalAnim('.horizontal_scrollbar_r div', 2, 'easeOutCubic');
             slide("#page_2");
         } else {
+            page = 1;
             $("#page_2").css("right", "2vh");
             $("#page_2").html("Contact");
             $("#page_3").css("left", "2vh");
@@ -130,10 +139,11 @@ function updatePage() {
             $(".horizontal_scrollbar_r > *").css("background-color", "var(--main_bg_2)");
             horizontalAnim('.horizontal_scrollbar_r div', 3, 'linear');
             slide("#page_2");
-            page = 1;
         }
     });
     $("#page_3").click(function () {
+        if (animating) return;
+        animating = true;
         if (page == 1) {
             page = 3
             $(".first_page").css("left", baseWidth + "vh");
@@ -146,6 +156,7 @@ function updatePage() {
             horizontalAnim('.horizontal_scrollbar_l div', 3, 'easeOutCubic');
             slide("#page_3");
         } else {
+            page = 1;
             $("#page_3").css("left", "2vh");
             $("#page_3").html("Experience");
             $("#page_2").css("right", "2vh");
@@ -155,7 +166,6 @@ function updatePage() {
             $(".horizontal_scrollbar_l > *").css("background-color", "var(--main_bg_2)");
             horizontalAnim('.horizontal_scrollbar_l div', 2, 'linear');
             slide("#page_3");
-            page = 1;
         }
     });
 }
@@ -182,21 +192,27 @@ function verticalAnim(targets, scale) {
         easing: 'cubicBezier(0.25, 0.1, 0.25, 1.0)',
         delay: anime.stagger(20, {
             from: 'center'
-        })
-
+        }),
+        complete: function(a) {
+          animating = false;
+        }
     });
 }
 
 function horizontalAnim(targets, dir, ease) {
     anime({
         targets: targets,
-        translateX: (dir == 2) ? "-62vh" : "62vh",
+        translateX: (dir == 2) ? "-62.2vh" : "62.2vh",
         duration: 500,
         scaleX: [10, 1],
         easing: ease,
-        delay: anime.stagger(20, {
-            from: 'center'
-        })
+        delay: anime.stagger(18, {
+            from: 'center',
+            easing: "easeInQuad"
+        }),
+        complete: function(a) {
+          animating = false;
+        }
     });
 }
 
