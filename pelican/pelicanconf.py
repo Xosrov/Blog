@@ -7,7 +7,7 @@ PATH = 'content'
 DISPLAY_PAGES_ON_MENU = False
 DISPLAY_CATEGORIES_ON_MENU = False
 
-THEME = "notmyidea"
+THEME = "themes/pelican-cait"
 
 TIMEZONE = 'UTC'
 
@@ -34,3 +34,19 @@ DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
 #RELATIVE_URLS = True
+
+# NOTE: adding latex support: https://mollermara.com/blog/mathjax/
+MARKDOWN = {
+    'extension_configs': {
+        'markdown.extensions.toc': {
+            'title': 'Table of contents:' 
+        },
+        'markdown.extensions.codehilite': {
+            'css_class': 
+            'highlight'
+        },
+        'markdown.extensions.extra': {},
+        'markdown.extensions.meta': {},
+    },
+    'output_format': 'html5',
+}
