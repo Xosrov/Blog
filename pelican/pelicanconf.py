@@ -1,5 +1,5 @@
 AUTHOR = 'Alireza Miryazdi (Xosrov)'
-SITENAME = 'Alireza\'s Blog'
+SITENAME = 'Aliz Blog'
 SITEURL = '/blog'
 OUTPUT_PATH = '../blog'
 MENUITEMS = [('CV', '/'), ('Blog', '/blog/')]
@@ -20,15 +20,15 @@ TRANSLATION_FEED_ATOM = None
 AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 
-# Blogroll
-LINKS = (('Pelican', 'https://getpelican.com/'),
-         ('Python.org', 'https://www.python.org/'),
-         ('Jinja2', 'https://palletsprojects.com/p/jinja/'),
-         ('You can modify those links in your config file', '#'),)
+USE_CUSTOM_MENU = True
+CUSTOM_MENUITEMS = (('Blog', ''),
+                    ('Contact', 'pages/contact.html'),
+                    ('CV', '..'))
 
-# Social widget
-SOCIAL = (('You can add links in your config file', '#'),
-          ('Another social link', '#'),)
+CONTACT_EMAIL = "seyed.alireza.miryazdi@gmail.com"
+CONTACTS = (('github', 'https://github.com/Xosrov'),
+            ('linkedin', 'https://www.linkedin.com/in/alireza-miryazdi/'),)
+
 
 DEFAULT_PAGINATION = 10
 

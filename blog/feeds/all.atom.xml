@@ -1,0 +1,655 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Aliz Blog</title><link href="https://xosrov.github.io/blog/" rel="alternate"></link><link href="https://xosrov.github.io/blog/feeds/all.atom.xml" rel="self"></link><id>https://xosrov.github.io/blog/</id><updated>2023-10-16T00:00:00+00:00</updated><entry><title>Understanding JPEG Compression: A Detailed Journey</title><link href="https://xosrov.github.io/blog/fourier-and-jpeg-compression.html" rel="alternate"></link><published>2023-10-16T00:00:00+00:00</published><updated>2023-10-16T00:00:00+00:00</updated><author><name>Alireza Miryazdi</name></author><id>tag:xosrov.github.io,2023-10-16:/blog/fourier-and-jpeg-compression.html</id><summary type="html">&lt;p&gt;What is JPEG, and how does it work? This document covers the basics of this lossy compression algorithm, and also goes into some detail about specifically how the Discrete Fourier Transform helps with compression.&lt;/p&gt;</summary><content type="html">&lt;div class="toc"&gt;&lt;span class="toctitle"&gt;Table of contents:&lt;/span&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href="#why-does-jpeg-work"&gt;Why Does JPEG Work?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#how-does-jpeg-work"&gt;How Does JPEG Work?&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href="#color-space-conversion"&gt;Color Space Conversion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#chrominance-downsampling"&gt;Chrominance Downsampling&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#discrete-cosine-transform-dct-quantization"&gt;Discrete Cosine Transform (DCT) &amp;amp; Quantization&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href="#wtf-is-dct"&gt;WTF is DCT&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href="#an-important-distinction"&gt;An Important Distinction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#example-cosine-series-approximation"&gt;Example, Cosine Series Approximation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#example-discrete-cosine-transform"&gt;Example, Discrete Cosine Transform&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#comparison-and-source-code"&gt;Comparison and Source Code&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#why-is-dct-useful"&gt;Why is DCT Useful?&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href="#quantization"&gt;Quantization&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href="#where-does-the-quantization-table-come-from"&gt;Where Does the Quantization Table Come From&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href="#run-length-huffman-coding"&gt;Run Length &amp;amp; Huffman Coding&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href="#run-length-encoding"&gt;Run Length Encoding&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#huffman-coding"&gt;Huffman Coding&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href="#decompression"&gt;Decompression&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#conclusion"&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#other-notes"&gt;Other Notes&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href="#what-is-entropy-compression"&gt;What is Entropy Compression&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href="#sources"&gt;Sources&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;There are so many sources out there about how lossy compression algorithms are able to compress image files in the order of 40+ MB's to just Kilobytes, but none of them was really enough for my tiny brain to comprehend completely.&lt;/p&gt;
+&lt;p&gt;Specifically, I had a lot of trouble with the math behind it: the Discrete Fourier Transform. It's easy to say that DCT help "discard high-frequency data from the image", but what does that even mean?&lt;/p&gt;
+&lt;p&gt;DCT comes up in so many areas of science, but specifically in many common compression algorithms such as JPEG. This document is my journey into understanding the math and algorithm behind JPEG, and its effectiveness and brilliance!&lt;/p&gt;
+&lt;h1 id="why-does-jpeg-work"&gt;Why Does JPEG Work?&lt;/h1&gt;
+&lt;p&gt;Our eyes are not perfect! Take a look at this &lt;a href="https://commons.wikimedia.org/wiki/File:Lichtenstein_img_processing_test.png"&gt;picture&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="test" src="https://xosrov.github.io/blog/images/84473babcee86abab0278ed19e0cb77a.png"&gt;&lt;/p&gt;
+&lt;p&gt;Natural images, like the one above, are perfect subjects for JPEGs compression. This is tied to the compression algorithm itself, but also to our eyes and how we see the world.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The JPEGs algorithm doesn't do well when there are &lt;strong&gt;stark&lt;/strong&gt; color differences. Most natural pictures don't have these sharp changes in color, and JPEG artifacts are less visible. However, if you've ever used JPEG compression for an image of a logo, for example, you might have seen that the edges become blurry. &lt;/li&gt;
+&lt;li&gt;JPEG takes advantage of weaknesses in our eyes and brain; take the image above, for example. 
+        - The region in the top right is a very smooth gradient of blue, and our eyes don't really care if we use the same shade of blue for very similar pixels. &lt;ul&gt;
+&lt;li&gt;For regions like the bottom left, even though there are a lot of stark color differences, our eyes glance over them! Our brains won't notice compression artifacts unless we are looking for them.&lt;/li&gt;
+&lt;li&gt;Our eyes have 100 million rod cells, but only 6 million cone cells. This means our eyes are much more sensitive to brightness and luminance, rather than color or chrominance. JPEG discards some color information, but keeps all the luminance information, and our eyes never notice.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="how-does-jpeg-work"&gt;How Does JPEG Work?&lt;/h1&gt;
+&lt;p&gt;JPEG works in multiple steps. Some steps discard information from the image (&lt;strong&gt;lossy&lt;/strong&gt;), while other simply compress data without discarding information (&lt;strong&gt;lossless&lt;/strong&gt;). These are covered in the next sections.&lt;/p&gt;
+&lt;h2 id="color-space-conversion"&gt;Color Space Conversion&lt;/h2&gt;
+&lt;p&gt;A pixel has 3 components, each a byte value of 0-255. In this step, These RGB values are converted to YCbCr, where:
+- Y: luminance
+- Cb: blue chrominance
+- Cr: red chrominance&lt;/p&gt;
+&lt;p&gt;This is done so chrominance (color) information can be discarded in the next step.&lt;/p&gt;
+&lt;p&gt;This process is ==lossless==.&lt;/p&gt;
+&lt;h2 id="chrominance-downsampling"&gt;Chrominance Downsampling&lt;/h2&gt;
+&lt;p&gt;Our eyes are less sensitive to color, so we can get away with discarding some color info.&lt;/p&gt;
+&lt;p&gt;For example, 2x2 squares from the Cr and Cb values are extracted, and a singular average is set for all of them. This reduces space needed for Cr and Cb to 1/4 their original values.&lt;/p&gt;
+&lt;p&gt;So in total, the image size is reduced to &lt;strong&gt;half&lt;/strong&gt; of its original value! The Cr and Cb values are scaled up to match the Y values when decompression takes place.&lt;/p&gt;
+&lt;p&gt;This process is ==lossy==.&lt;/p&gt;
+&lt;h2 id="discrete-cosine-transform-dct-quantization"&gt;Discrete Cosine Transform (DCT) &amp;amp; Quantization&lt;/h2&gt;
+&lt;p&gt;Our eyes are more sensitive to low frequency elements, and less sensitive to high frequency elements.
+- Low frequency elements: The outlines of objects
+- High frequency elements: Subtle variations in the details of an object&lt;/p&gt;
+&lt;p&gt;In very short terms, this process &lt;em&gt;smooths&lt;/em&gt; out the image. This step is applied to Y, Cr and Cb steps independently.&lt;/p&gt;
+&lt;p&gt;DCT is ==lossless==, but quantization is ==lossy==.&lt;/p&gt;
+&lt;p&gt;But let's get into the details. How do DCT and Quantization work to discard pixel information without noticeable quality change?&lt;/p&gt;
+&lt;h3 id="wtf-is-dct"&gt;WTF is DCT&lt;/h3&gt;
+&lt;p&gt;Let's first talk about the Fourier transform. The Fourier Transform (FT) is a transform that converts a function into a form that describes the frequencies present in the original function. FT is analogous to decomposing the sound of a musical chord into terms of the intensity of its constituent pitches. &lt;/p&gt;
+&lt;p&gt;It is used in many forms, but exactly how it comes in compression will be discussed later.
+$$
+f(x)=\int _{-\infty }^{\infty }{\hat {f}}(\xi )\ e^{i2\pi \xi x}\,d\xi ,\quad \forall \ x\in \mathbb {R}
+$$
+This is the general form, but computers can't calculate this! Computers work with discrete samples of data, and they don't understand math like we do. Also note that the $e^{\text{stuff}}$ value is another representation of sine and cosine.&lt;/p&gt;
+&lt;p&gt;This is where Discrete Time Fourier Transform (DTFT) comes into play. It is an alternative representation of FT:
+$$
+X_{2\pi }(\omega )=\sum _{n=-\infty }^{\infty }x[n]\,e^{-i\omega n}
+$$&lt;/p&gt;
+&lt;p&gt;This is better, because the steps are discrete instead of continuous. Still, there are infinite values! So next up, Discrete Fourier Transform (DFT) comes up:&lt;/p&gt;
+&lt;p&gt;$$
+X_{k}=\sum _{n=0}^{N-1}x_n\cdot e^{-{\frac {i2\pi }{N}}kn}
+$$&lt;/p&gt;
+&lt;p&gt;DFT (Equivalent to FFT), has discrete steps, but it is also in a finite range! This makes it usable by computers.&lt;/p&gt;
+&lt;p&gt;Assume we have a sound wave, and we want to analyze what frequencies are within it. Sound waves are continuous, but when recording, we can only record a finite number of samples! In truth, using DFT loses some frequency information compared to if FT. However, if the sample numbers in a fixed time increase, the difference would be negligible for most functions.&lt;/p&gt;
+&lt;h4 id="an-important-distinction"&gt;An Important Distinction&lt;/h4&gt;
+&lt;p&gt;Fourier Transform should not be confused with Fourier Series, although they are very similar.&lt;/p&gt;
+&lt;p&gt;Here is &lt;strong&gt;my interpretation&lt;/strong&gt; of each:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Fourier Series, Cosine Series and Sine Series&lt;/strong&gt;
+    Is very similar to DTFT. It basically aims to approximate a &lt;em&gt;piecewise continuous&lt;/em&gt; function with trigonometric functions. The difference is that DTFT is a sum of trigonometric functions from $- \infty$ to $\infty$, while at least with series, they have a fixed starting point but go to $\infty$ as well. For a function limited to a specific range, they are pretty much identical.&lt;/p&gt;
+&lt;p&gt;The Fourier Series uses both sines and cosines, while the Cosine Series uses strictly cosines and the Sine Series uses strictly sines. When to use them depends on the usecase, since each has unique properties.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Discrete Fourier Transform (DFT/FFT), Discrete Cosine Transform (DCT) and Discrete Sine Transform (DST)&lt;/strong&gt;
+    Basically like the Fourier Series, but only applicable when instead of a continuous function, we have a discrete function. This is the &lt;strong&gt;only form of Fourier functions that computers can understand!&lt;/strong&gt; If we use a discrete function but with step size that is very small, it is basically equivalent to the series discussed previously.&lt;/p&gt;
+&lt;p&gt;DFT uses both sines and cosines, DCT strictly cosine and DST strictly sine. An interesting phenomenon, is that DCT and DST use half as many terms to describe the same values as DFT does, but they each have their own properties and usecases.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id="example-cosine-series-approximation"&gt;Example, Cosine Series Approximation&lt;/h4&gt;
+&lt;p&gt;Here is an example to better visualize the two. Below is an animation of the first 20 terms of a sine series used to approximate a function in a specific range:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="test" src="https://xosrov.github.io/blog/images/45eff1af971c1e3b0213368ef84ca3f2.gif"&gt;   &lt;/p&gt;
+&lt;h4 id="example-discrete-cosine-transform"&gt;Example, Discrete Cosine Transform&lt;/h4&gt;
+&lt;p&gt;Imagine we have a discrete function of 8 equally spaced values in the range $[1,8]$ and values between $[0, 255]$. We will call this function a &lt;strong&gt;pixel array of size 8&lt;/strong&gt;. The value range doesn't matter, but it has to have a minimum and maximum.&lt;/p&gt;
+&lt;p&gt;Next, we define the &lt;strong&gt;waveforms for an array of size 8&lt;/strong&gt;. These are built by plotting the functions $\cos(\omega t)$ where $\omega \in [0,7], \omega \in \mathbb{N}$, and taking the intersections with the numbers 0 through 7. 
+&lt;img alt="test" src="https://xosrov.github.io/blog/images/ffcc08a7dd250d1030f935388ded2b98.png"&gt;&lt;/p&gt;
+&lt;p&gt;Now we shift the original pixel array downwards, so the range becomes $[-127, 128]$ instead. DCT proves that ==it is possible to construct &lt;strong&gt;any&lt;/strong&gt; arbitrary pixel array, just by using the 8 waveforms above==. Each waveform can have a different coefficient, of course.&lt;/p&gt;
+&lt;p&gt;For example, the animation below shows the construction of &lt;code&gt;[-127, 64, 0, 32, -64, -32, 16, 128]&lt;/code&gt;, which can be thought of as the luminance values of 8 pixels. Notice how the pixel values are constructed perfectly when all 8 terms are added.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="test" src="https://xosrov.github.io/blog/images/efd71e79f9167449e5ac141a843fb6b6.gif"&gt;&lt;/p&gt;
+&lt;h4 id="comparison-and-source-code"&gt;Comparison and Source Code&lt;/h4&gt;
+&lt;p&gt;But wait! How did we even animate the example for Cosine Series Approximation? It is showing a &lt;strong&gt;continuous&lt;/strong&gt; function, and computers don't understand continuity like we do!&lt;/p&gt;
+&lt;p&gt;This is where we see the similarity between DCT and Cosine Series. Since computers only understand discrete numbers, the Cosine Series is calculated exactly like DCT is, but with a huge array size!&lt;/p&gt;
+&lt;p&gt;We can understand this by looking at the source code used to generate these two animations. In the Cosine Series animation, 100 linearly spaced points are chosen between 0 and 5 (&lt;code&gt;np.linspace(0, 5, 100)&lt;/code&gt;), while in the DCT animation, only 8 linearly spaced points are chosen.&lt;/p&gt;
+&lt;p&gt;Note that the actual definition of the Cosine Series requires the analytical equation of the function being approximated. The calculations for these animations instead uses a &lt;strong&gt;numeric approach&lt;/strong&gt;, and is different and less precise than the actual Cosine Series definition (even in the 20 terms that were plotted). The more points we choose in this range, the more precise our numerical method becomes.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;plt&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;numpy&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nn"&gt;np&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;math&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;scipy.fft&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;dct&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;idct&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;matplotlib.animation&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;FuncAnimation&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Define the function f(t)&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;power&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;0.24&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mf"&gt;2.4&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;animate_cosine_series&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="c1"&gt;# Define the time domain&lt;/span&gt;
+    &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;linspace&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Compute the function values&lt;/span&gt;
+    &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Compute the DCT of y&lt;/span&gt;
+    &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;dct&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;norm&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;ortho&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Define the number of terms to use in the approximation&lt;/span&gt;
+    &lt;span class="n"&gt;M&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Define a function that updates the plot for each frame&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;animate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="c1"&gt;# Use only i terms in the DCT approximation&lt;/span&gt;
+        &lt;span class="n"&gt;y_approx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;idct&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;[:&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;norm&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;ortho&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="c1"&gt;# Clear the previous plot&lt;/span&gt;
+        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cla&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+        &lt;span class="c1"&gt;# Plot the original and approximated functions&lt;/span&gt;
+        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;plot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;label&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;f(t)&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;plot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_approx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;label&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Cosine Series Approximation&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;xlabel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;t&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ylabel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;f(t)&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;legend&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;title&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Using &lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s1"&gt; Terms&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Create a FuncAnimation object with 10 frames&lt;/span&gt;
+    &lt;span class="n"&gt;ani&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;FuncAnimation&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gcf&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;animate&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;frames&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;M&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Save or show the animation&lt;/span&gt;
+    &lt;span class="c1"&gt;# ani.save(&amp;#39;fouryerr.gif&amp;#39;, writer=&amp;#39;imagemagick&amp;#39;)&lt;/span&gt;
+    &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;show&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;animate_dcosine_transform&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="c1"&gt;# Define the time domain&lt;/span&gt;
+    &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;np&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;array&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;127&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;64&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;32&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;64&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;32&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;128&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+    &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+    &lt;span class="c1"&gt;# Compute the DCT of y&lt;/span&gt;
+    &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;dct&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;norm&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;ortho&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Define the number of terms to use in the approximation&lt;/span&gt;
+    &lt;span class="n"&gt;M&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Define a function that updates the plot for each frame&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;animate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="c1"&gt;# Use only i terms in the DCT approximation&lt;/span&gt;
+        &lt;span class="n"&gt;y_approx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;idct&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;[:&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;norm&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;ortho&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="c1"&gt;# Clear the previous plot&lt;/span&gt;
+        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cla&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+        &lt;span class="c1"&gt;# Plot the original and approximated functions&lt;/span&gt;
+        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bar&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;label&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Original Pixel Value&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bar&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y_approx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;label&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Discrete Cosine Transform Approximation&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;xlabel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;pixel&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ylabel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;value&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;legend&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+        &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;title&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Using &lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s1"&gt; Terms&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Create a FuncAnimation object with 10 frames&lt;/span&gt;
+    &lt;span class="n"&gt;ani&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;FuncAnimation&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gcf&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;animate&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;frames&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;M&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Save or show the animation&lt;/span&gt;
+    &lt;span class="c1"&gt;# ani.save(&amp;#39;fouryerrp.gif&amp;#39;, writer=&amp;#39;imagemagick&amp;#39;)&lt;/span&gt;
+    &lt;span class="n"&gt;plt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;show&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+&lt;span class="n"&gt;animate_dcosine_transform&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h4 id="why-is-dct-useful"&gt;Why is DCT Useful?&lt;/h4&gt;
+&lt;p&gt;One of the greatest features of using DCT (or the Cosine Series), as opposed to DFT and DST, is that DCT has a higher "&lt;em&gt;energy concentration&lt;/em&gt;" in the first few terms.
+- In approximating continuous functions using Cosine Series, this means we can discard all other terms after, say, the 3rd, and we would have a good approximation of the function.
+- In discrete functions, such as the pixel example, discarding the last few terms effectively means we are losing fine detail; but keeping the most important terms of the transform.&lt;/p&gt;
+&lt;p&gt;Take this example from before, showing 8 pixels.
+&lt;img alt="test" src="https://xosrov.github.io/blog/images/5678a62fccf66dccd73d623be15a95cc.png"&gt;&lt;/p&gt;
+&lt;p&gt;These values contain all the information necessary to define the eight pixels. Thus, the ultimate goal is to compress this data, so it can be stored or transmitted and later decompressed to reform the original image. However, simple entropy or statistical encoding of this data will not be extremely effective [[#What is Entropy Compression|because in continuous tone images, the levels of luminosity have equal probabilities of occurring]].&lt;/p&gt;
+&lt;p&gt;The purpose of the DCT transformation phase is to identify "pieces of information in the image’s signal that can be effectively ‘thrown away’ without seriously compromising the quality of the image" (Nelson 359).&lt;/p&gt;
+&lt;p&gt;Applying the discrete cosine transform (DCT) and selectively discarding high frequency DCT coefficients is a common technique in lossy image and video compression. This process skews or alters the data by removing high frequency components, eliminating fine details and making the data more uniform. Entropy compression can then be applied to compress the skewed data.&lt;/p&gt;
+&lt;p&gt;In JPEG encoding, this process is applied to every &lt;strong&gt;8x8 pixel grid&lt;/strong&gt; in the image. While the exact process of DCT in 2D was not covered, it is essentially the same process. An 8x8 pixel grid had 64 waveforms that look like this:
+&lt;img alt="test" src="https://xosrov.github.io/blog/images/be6688d47ba7b7221ddb9a08a676f2ee.png"&gt;
+Let's say we've calculated the coefficient values for these 64 waveforms for a 8x8 pixel grid. DCT makes sure that the higher coefficients are closer to the top left, and impact the final image more than the others.
+&lt;img alt="test" src="https://xosrov.github.io/blog/images/1fed89ac10000a77d51c7cc9c586b09f.png"&gt;&lt;/p&gt;
+&lt;h3 id="quantization"&gt;Quantization&lt;/h3&gt;
+&lt;p&gt;Quantization is the process of removing these less impactful terms from the DCT transformed pixel data. The way it works is as follows. Assume we have the transformed pixel data($P$), that look like this:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;92&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;-9&lt;/td&gt;
+&lt;td&gt;-7&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;-1&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-39&lt;/td&gt;
+&lt;td&gt;-58&lt;/td&gt;
+&lt;td&gt;12&lt;/td&gt;
+&lt;td&gt;17&lt;/td&gt;
+&lt;td&gt;-2&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-84&lt;/td&gt;
+&lt;td&gt;62&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;-18&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;-5&lt;/td&gt;
+&lt;td&gt;5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-52&lt;/td&gt;
+&lt;td&gt;-36&lt;/td&gt;
+&lt;td&gt;-10&lt;/td&gt;
+&lt;td&gt;14&lt;/td&gt;
+&lt;td&gt;-10&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;-2&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-86&lt;/td&gt;
+&lt;td&gt;-40&lt;/td&gt;
+&lt;td&gt;49&lt;/td&gt;
+&lt;td&gt;-7&lt;/td&gt;
+&lt;td&gt;17&lt;/td&gt;
+&lt;td&gt;-6&lt;/td&gt;
+&lt;td&gt;-2&lt;/td&gt;
+&lt;td&gt;5&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-62&lt;/td&gt;
+&lt;td&gt;65&lt;/td&gt;
+&lt;td&gt;-12&lt;/td&gt;
+&lt;td&gt;-2&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;-8&lt;/td&gt;
+&lt;td&gt;-2&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-17&lt;/td&gt;
+&lt;td&gt;14&lt;/td&gt;
+&lt;td&gt;-36&lt;/td&gt;
+&lt;td&gt;17&lt;/td&gt;
+&lt;td&gt;-11&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;-1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-54&lt;/td&gt;
+&lt;td&gt;32&lt;/td&gt;
+&lt;td&gt;-9&lt;/td&gt;
+&lt;td&gt;-9&lt;/td&gt;
+&lt;td&gt;22&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Next, we define a &lt;strong&gt;quantization table&lt;/strong&gt; ($T$). It is also a 8x8 table that looks like this:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;5&lt;/td&gt;
+&lt;td&gt;7&lt;/td&gt;
+&lt;td&gt;9&lt;/td&gt;
+&lt;td&gt;11&lt;/td&gt;
+&lt;td&gt;13&lt;/td&gt;
+&lt;td&gt;15&lt;/td&gt;
+&lt;td&gt;17&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;5&lt;/td&gt;
+&lt;td&gt;7&lt;/td&gt;
+&lt;td&gt;9&lt;/td&gt;
+&lt;td&gt;11&lt;/td&gt;
+&lt;td&gt;13&lt;/td&gt;
+&lt;td&gt;15&lt;/td&gt;
+&lt;td&gt;17&lt;/td&gt;
+&lt;td&gt;19&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;7&lt;/td&gt;
+&lt;td&gt;9&lt;/td&gt;
+&lt;td&gt;11&lt;/td&gt;
+&lt;td&gt;13&lt;/td&gt;
+&lt;td&gt;15&lt;/td&gt;
+&lt;td&gt;17&lt;/td&gt;
+&lt;td&gt;19&lt;/td&gt;
+&lt;td&gt;21&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;9&lt;/td&gt;
+&lt;td&gt;11&lt;/td&gt;
+&lt;td&gt;13&lt;/td&gt;
+&lt;td&gt;15&lt;/td&gt;
+&lt;td&gt;17&lt;/td&gt;
+&lt;td&gt;19&lt;/td&gt;
+&lt;td&gt;21&lt;/td&gt;
+&lt;td&gt;23&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;11&lt;/td&gt;
+&lt;td&gt;13&lt;/td&gt;
+&lt;td&gt;15&lt;/td&gt;
+&lt;td&gt;17&lt;/td&gt;
+&lt;td&gt;19&lt;/td&gt;
+&lt;td&gt;21&lt;/td&gt;
+&lt;td&gt;23&lt;/td&gt;
+&lt;td&gt;25&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;13&lt;/td&gt;
+&lt;td&gt;15&lt;/td&gt;
+&lt;td&gt;17&lt;/td&gt;
+&lt;td&gt;19&lt;/td&gt;
+&lt;td&gt;21&lt;/td&gt;
+&lt;td&gt;23&lt;/td&gt;
+&lt;td&gt;25&lt;/td&gt;
+&lt;td&gt;27&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;15&lt;/td&gt;
+&lt;td&gt;17&lt;/td&gt;
+&lt;td&gt;19&lt;/td&gt;
+&lt;td&gt;21&lt;/td&gt;
+&lt;td&gt;23&lt;/td&gt;
+&lt;td&gt;25&lt;/td&gt;
+&lt;td&gt;27&lt;/td&gt;
+&lt;td&gt;29&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;17&lt;/td&gt;
+&lt;td&gt;19&lt;/td&gt;
+&lt;td&gt;21&lt;/td&gt;
+&lt;td&gt;23&lt;/td&gt;
+&lt;td&gt;25&lt;/td&gt;
+&lt;td&gt;27&lt;/td&gt;
+&lt;td&gt;29&lt;/td&gt;
+&lt;td&gt;31&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;There are typically higher numbers on the bottom right. Next, for each number in the grid, the compressed value in the final image ($Q$) is calculated from the below formula:
+$$
+Q_{ij} = \lfloor \frac{P_{ij}}{T_{ij}} \rfloor \times T_{ij}
+$$
+For example, in the first row and column:
+$$
+Q_{11} = \lfloor \frac{92}{3} \rfloor \times 3 = 90
+$$
+Likewise, for the bottom right value in the table:
+$$
+Q_{11} = \lfloor \frac{3}{31} \rfloor \times 31 = 0
+$$
+This is calculated for all the values, and this is the result:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;90&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;-7&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-35&lt;/td&gt;
+&lt;td&gt;-56&lt;/td&gt;
+&lt;td&gt;9&lt;/td&gt;
+&lt;td&gt;11&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-84&lt;/td&gt;
+&lt;td&gt;54&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;-13&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-45&lt;/td&gt;
+&lt;td&gt;-33&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-77&lt;/td&gt;
+&lt;td&gt;-39&lt;/td&gt;
+&lt;td&gt;45&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-52&lt;/td&gt;
+&lt;td&gt;60&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-15&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;-19&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-51&lt;/td&gt;
+&lt;td&gt;19&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The higher values of $T$ in the bottom right cause the final values to be zero in those ranges. This effectively allows data compression by discarding information.&lt;/p&gt;
+&lt;h4 id="where-does-the-quantization-table-come-from"&gt;Where Does the Quantization Table Come From&lt;/h4&gt;
+&lt;p&gt;There are many ways to choose a quantization table, and each compression level has its own quantization table. The bottom right values are usually very high, though, since high-frequency data is usually discarded.
+Finding the exact quantization table can be done in different ways:
+- Measuring the mathematical error found between an input image and its output image after it has been decompressed, trying to determine an acceptable level of error.
+- Using other quality assessment methods, such as methods reliant on machine learning. These try to achieve the same visual quality by tuning the quantization values.&lt;/p&gt;
+&lt;h2 id="run-length-huffman-coding"&gt;Run Length &amp;amp; Huffman Coding&lt;/h2&gt;
+&lt;p&gt;This is the final step. It is basically an entropy compression method. This process is ==lossless==. First, the quantized values are listed in a &lt;a href="https://en.wikipedia.org/wiki/JPEG#/media/File:JPEG_ZigZag.svg"&gt;zigzag pattern&lt;/a&gt; seen below.
+&lt;img alt="test" src="https://xosrov.github.io/blog/images/d7b726da3c3eb6f300ccdada4f2861e4.png"&gt;
+The reason is tied to the definition of entropy compression; since the lower left values are more likely to be zero, this way of listing the values has more chance of placing a lot of zeros next to each other, allowing more compression.&lt;/p&gt;
+&lt;p&gt;Let's look at the quantized values from before:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;90&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;-7&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-35&lt;/td&gt;
+&lt;td&gt;-56&lt;/td&gt;
+&lt;td&gt;9&lt;/td&gt;
+&lt;td&gt;11&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-84&lt;/td&gt;
+&lt;td&gt;54&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;-13&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-45&lt;/td&gt;
+&lt;td&gt;-33&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-77&lt;/td&gt;
+&lt;td&gt;-39&lt;/td&gt;
+&lt;td&gt;45&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-52&lt;/td&gt;
+&lt;td&gt;60&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-15&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;-19&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;-51&lt;/td&gt;
+&lt;td&gt;19&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Using this zigzag method, the data would look like this:  &lt;/p&gt;
+&lt;p&gt;&lt;code&gt;90 0 -35 -84 -56 -7 0 9 54 -45 -77 -33 0 11 0 0 0 -13 0 -39 -52 -15 60 45 0 0 0 0 0 0 0 0 0 0 0 -51 19 -19 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Notice how there are a lot of zeros next to each other.&lt;/p&gt;
+&lt;h3 id="run-length-encoding"&gt;Run Length Encoding&lt;/h3&gt;
+&lt;p&gt;A type of entropy encoding. Instead of listing all the values, we only list the value and its repetitions. For examples, the snippet &lt;code&gt;45 0 0 0 0 0 0 0 0 0 0 0 -51 19&lt;/code&gt; from above, we get &lt;code&gt;45 0(11) -51 19&lt;/code&gt; which is much more compressed.&lt;/p&gt;
+&lt;h3 id="huffman-coding"&gt;Huffman Coding&lt;/h3&gt;
+&lt;p&gt;This encoding type is also used for text compression. How it works is not covered in this article, but it basically tries to compress by using fewer bits for more commonly used data. This is good because a lot of pictures contain very smooth gradients that get evened out by the previous steps. Huffman encoding is very effective for these sections.&lt;/p&gt;
+&lt;p&gt;Tom Scott has a &lt;a href="https://www.youtube.com/watch?v=JsTptu56GM8"&gt;nice video&lt;/a&gt; explaining it much better. Take a look.&lt;/p&gt;
+&lt;h2 id="decompression"&gt;Decompression&lt;/h2&gt;
+&lt;p&gt;Since all the steps are reversible, decompression is trivial. First Huffman decoding and run length decoding is performed, the values are placed in the transformed quantization tables and the 8x8 pixel blocks are constructed.
+The same process happens for the chrominance values, but the values also get upscaled in the end.
+Finally, the luminance and chrominance values are added, the result is converted to RGB and can finally be displayed.&lt;/p&gt;
+&lt;h2 id="conclusion"&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;It's amazing how topics from so many areas like color theory, mathematics, and computer science can come together to form the image compression that we know and love. 
+And this is just the start of it! These are other compression methods, lossless ones like PNG and SVG, lossy video compression methods like H264 that have to compress 60 frames a second and so on! &lt;/p&gt;
+&lt;p&gt;I hope you enjoyed, and came to appreciate image compression as much as I do.&lt;/p&gt;
+&lt;h2 id="other-notes"&gt;Other Notes&lt;/h2&gt;
+&lt;h3 id="what-is-entropy-compression"&gt;What is Entropy Compression&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Information Entropy&lt;/strong&gt; is defined as the minimum number of bits that must be used to represent all the information contained in a dataset. For example, in a coin toss, you need 1 bit. In a double coin toss, you need 2 bits, etc.&lt;/p&gt;
+&lt;p&gt;An &lt;strong&gt;entropy encoder&lt;/strong&gt; encodes data by reducing redundancy, without changing the entropy. For example, instead of 10 coin tosses being presented as 1111111111, they get represented as 10 1's. It is a method of &lt;strong&gt;lossless compression&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Entropy compression relies on the fact that the distribution of data is skewed. ==If all values have equal probability of occurring, entropy compression is useless==.&lt;/p&gt;
+&lt;h2 id="sources"&gt;Sources&lt;/h2&gt;
+&lt;p&gt;https://www.youtube.com/watch?v=Kv1Hiv3ox8I
+https://cs.stanford.edu/people/eroberts/courses/soco/projects/data-compression/lossy/jpeg/dct.htm
+https://www.geeksforgeeks.org/what-is-image-compression/
+https://vincmazet.github.io/bip/compression/lossy.html
+https://en.wikipedia.org/wiki/Fourier_sine_and_cosine_series
+https://en.wikipedia.org/wiki/Discrete_cosine_transform
+https://en.wikipedia.org/wiki/Discrete_Fourier_transform
+https://en.wikipedia.org/wiki/Fourier_series
+https://blog.demofox.org/2016/08/11/understanding-the-discrete-fourier-transform/
+https://blog.demofox.org/2020/11/04/frequency-domain-image-compression-and-filtering/&lt;/p&gt;</content><category term="JPEG Compression"></category><category term="compression"></category><category term="DCT"></category><category term="Fourier Transform"></category></entry></feed>

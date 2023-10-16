@@ -1,11 +1,11 @@
-Title: Fourier Transform and JPEG Encoding: A Detailed Journey
-Date: 2023-10-15 11:11
-Category: JPEG Encoding
-Tags: Encoding, DCT, Fourier Transform
-Slug: fourier-and-jpeg-encoding
-Keywords: DCT, JPEG, Encoding
+Title: Understanding JPEG Compression: A Detailed Journey
+Date: 2023-10-16
+Category: JPEG Compression
+Tags: compression, DCT, Fourier Transform
+Slug: fourier-and-jpeg-compression
+Keywords: DCT, JPEG, compression
 Authors: Alireza Miryazdi
-Summary: A Detailed Journey into What DCT is, and How it Helps Lossless JPEG Encoding
+Summary: What is JPEG, and how does it work? This document covers the basics of this lossy compression algorithm, and also goes into some detail about specifically how the Discrete Fourier Transform helps with compression.
 
 [TOC]
 
@@ -71,7 +71,7 @@ Let's first talk about the Fourier transform. The Fourier Transform (FT) is a tr
 
 It is used in many forms, but exactly how it comes in compression will be discussed later.
 $$
-{\displaystyle f(x)=\int _{-\infty }^{\infty }{\hat {f}}(\xi )\ e^{i2\pi \xi x}\,d\xi ,\quad \forall \ x\in \mathbb {R}}
+f(x)=\int _{-\infty }^{\infty }{\hat {f}}(\xi )\ e^{i2\pi \xi x}\,d\xi ,\quad \forall \ x\in \mathbb {R}
 $$
 This is the general form, but computers can't calculate this! Computers work with discrete samples of data, and they don't understand math like we do. Also note that the $e^{\text{stuff}}$ value is another representation of sine and cosine.
 
@@ -80,9 +80,10 @@ $$
 X_{2\pi }(\omega )=\sum _{n=-\infty }^{\infty }x[n]\,e^{-i\omega n}
 $$
 
-This is better, because the steps are discrete instead of continuous. Still, there are infinite values! So next up, Discrete Fourier Transform (DFT) comes up:  
+This is better, because the steps are discrete instead of continuous. Still, there are infinite values! So next up, Discrete Fourier Transform (DFT) comes up:
+
 $$
-{\displaystyle X_{k}=\sum _{n=0}^{N-1}x_{n}\cdot e^{-{\frac {i2\pi }{N}}kn}}
+X_{k}=\sum _{n=0}^{N-1}x_n\cdot e^{-{\frac {i2\pi }{N}}kn}
 $$
 
 DFT (Equivalent to FFT), has discrete steps, but it is also in a finite range! This makes it usable by computers.
@@ -314,7 +315,8 @@ Let's look at the quantized values from before:
 | -15 | 0   | -19 | 0   | 0   | 0   | 0   | 0   |
 | -51 | 19  | 0   | 0   | 0   | 0   | 0   | 0   |
 
-Using this zigzag method, the data would look like this:
+Using this zigzag method, the data would look like this:  
+
 `90 0 -35 -84 -56 -7 0 9 54 -45 -77 -33 0 11 0 0 0 -13 0 -39 -52 -15 60 45 0 0 0 0 0 0 0 0 0 0 0 -51 19 -19 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0`
 
 Notice how there are a lot of zeros next to each other.

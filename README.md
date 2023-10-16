@@ -6,6 +6,7 @@ CV built manually
 
 Blog built with Pelican
     cd pelican && make html
+    or make publish for production
 
 Pelican saves generated static blog in ./blog
 
