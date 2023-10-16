@@ -504,7 +504,8 @@ a {
 }
 
 .day,
-.night {
+.night,
+#blog-link {
     position: relative;
     display: flex;
     justify-content: center;
@@ -519,7 +520,8 @@ a {
 }
 
 .day *,
-.night * {
+.night *,
+#blog-link {
     font-family: "Neucha"
 }
 
@@ -535,12 +537,28 @@ a {
     color: var(--main_bg_2);
 }
 
+#blog-link {
+    background-color: var(--main_bg_2);
+    border: .5vh solid var(--text_1);
+    width: 8vh;
+    text-decoration: none;
+    color: var(--text_2);
+    animation: textBlink 0.8s linear infinite alternate;
+}
+
 .day:hover,
 .night:hover {
     width: 6vh;
     height: 6vh;
     border-width: 1vh;
-    font-size: 3.5vh
+    font-size: 3.5vh;
+}
+
+#blog-link:hover {
+    width: 16vh;
+    height: 6vh;
+    border-width: 1vh;
+    font-size: 4vh;
 }
 
 #themes input {
