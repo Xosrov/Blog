@@ -45,6 +45,7 @@ MARKDOWN = {
             'css_class': 
             'highlight'
         },
+        "pymdownx.mark": {},
         'markdown.extensions.extra': {},
         'markdown.extensions.meta': {},
     },
