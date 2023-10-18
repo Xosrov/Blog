@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Aliz Blog - Concurrency vs Parallelism</title><link href="https://xosrov.github.io/blog/" rel="alternate"></link><link href="https://xosrov.github.io/blog/feeds/concurrency-vs-parallelism.atom.xml" rel="self"></link><id>https://xosrov.github.io/blog/</id><updated>2023-10-18T00:00:00+00:00</updated><entry><title>Differentiating Concurrent and Parallelism</title><link href="https://xosrov.github.io/blog/concurrency-and-parallelism.html" rel="alternate"></link><published>2023-10-18T00:00:00+00:00</published><updated>2023-10-18T00:00:00+00:00</updated><author><name>Alireza Miryazdi</name></author><id>tag:xosrov.github.io,2023-10-18:/blog/concurrency-and-parallelism.html</id><summary type="html">&lt;p&gt;Differentiating concurrency and parallelism is confusing without understanding the underlying concepts first. This article aims to give you a pretty good understanding of the core concepts of concurrency, how it is handled by different programming languages, and gives some generic guidelines on when to use which.&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;a href="https://www.howtogeek.com/194756/cpu-basics-multiple-cpus-cores-and-hyper-threading-explained/"&gt;source 1&lt;/a&gt;&lt;br&gt;
+&lt;a href="https://www.intel.com/content/www/us/en/gaming/resources/hyper-threading.html"&gt;source 2&lt;/a&gt;&lt;br&gt;
+&lt;a href="https://www.baeldung.com/cs/multithreading-vs-hyperthreading"&gt;source 3&lt;/a&gt;  &lt;/p&gt;
+&lt;div class="toc"&gt;&lt;span class="toctitle"&gt;Table of contents:&lt;/span&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href="#cpu-architecture"&gt;CPU Architecture&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href="#some-questions"&gt;Some Questions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="#measuring-cpu-performance"&gt;Measuring CPU Performance&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href="#programming-concepts"&gt;Programming Concepts&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href="#implementation"&gt;Implementation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href="#choosing"&gt;Choosing&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;There are in two concepts in software design:
+- &lt;strong&gt;Concurrency&lt;/strong&gt;: Multiple tasks that have the ability to run in an overlapping manner, also encapsulates parallelism
+- &lt;strong&gt;Parallelism&lt;/strong&gt;: Performing multiple operations at the same time  &lt;/p&gt;
+&lt;p&gt;Before we get more into it, we need to know just a little bit about the CPU architecture itself.&lt;/p&gt;
+&lt;h2 id="cpu-architecture"&gt;CPU Architecture&lt;/h2&gt;
+&lt;p&gt;Pentium 4's of the day featured just a single CPU core, so it could only perform one task at a time - even if it were able to switch between tasks quickly enough that it seemed like multitasking.  &lt;/p&gt;
+&lt;p&gt;This switching between tasks is called &lt;strong&gt;context switching&lt;/strong&gt;, In context switching, all the information from a process needs to be removed, and new information needs to be loaded. This can be expensive! The CPU does this because a long calculation or an IO-bound operation should not lock the CPU for all other pending operations.  &lt;/p&gt;
+&lt;p&gt;In modern CPUs, other concepts and features are also available:  &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Cores&lt;/strong&gt;&lt;br&gt;
+A mini CPU within the CPU. Processes in each core can run in parallel to the others.&lt;br&gt;
+In the past, this would only be possible with having 2 separate CPUs connected to each other, but all the complexities and the cost of communication between them means they don't perform as well.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Hyper-Threading (Intel) or Simultaneous Multithreading (Others)&lt;/strong&gt;&lt;br&gt;
+Each core can, itself, act as many cores. The CPU handles parallel tasks within the same core, but it doesn't have the same throughput as having 2 separate cores.  &lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Hyper-threading can emulate multiple cores, even though they don't actually exist. In a computer with one CPU, 8 cores and each core having 2 threads, the OS effectively &lt;em&gt;sees&lt;/em&gt; 16 CPUs!&lt;/p&gt;
+&lt;h3 id="some-questions"&gt;Some Questions&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Q: Assume we have a single-core CPU with no hyper-threading, and another single-core CPU with hyper-threading. How do they perform differently?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In both, concurrency is still possible through context switching&lt;/li&gt;
+&lt;li&gt;In the CPU without hyper-threading, each time a context switch happens, all memory for the new process needs to be loaded.&lt;/li&gt;
+&lt;li&gt;In the hyper-threaded model, the OS sees two logical cores, and queues them both; memory for both processes is loaded into the CPU memory, and context switching is less expensive. Intel claims it increases performance speed by 30%.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Q: Assume we have a single-core CPU with hyper-threading, and another dual-core CPU with no hyper-threading. How do they perform differently?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;While they both appear the same to the OS, the CPU handles them differently.&lt;/li&gt;
+&lt;li&gt;The dual-core CPU is capable of parallelism: running two processes at the same time.&lt;/li&gt;
+&lt;li&gt;The hyper-threaded CPU is not capable of parallelism, only concurrency through context switching.&lt;/li&gt;
+&lt;li&gt;Note that context switching still happens in both, BUT in the dual-core model, there are two cores performing it.  &lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In practice, modern CPUs use a mixture of hyper-threading and multicore architectures, having the best of both worlds!&lt;/p&gt;
+&lt;h3 id="measuring-cpu-performance"&gt;Measuring CPU Performance&lt;/h3&gt;
+&lt;p&gt;These are applicable for a single-core CPU:
+- IPC (Instruction Per Cycle/Clock) - How many things the CPU can do in one cycle.
+- Clock Speed tells you how many cycles the CPU can complete in a second.
+For example, while a CPU with a faster clock speed can complete more cycles in one second, a CPU with a higher IPC but lower clock speed might still be able to complete more tasks in one second.  &lt;/p&gt;
+&lt;p&gt;Multicore architectures and hyper-threading complicate things, so always consider &lt;strong&gt;benchmarking on the architecture you are working on&lt;/strong&gt;, because the same program could run very differently on different CPUs. &lt;/p&gt;
+&lt;h2 id="programming-concepts"&gt;Programming Concepts&lt;/h2&gt;
+&lt;p&gt;Now, this is where it gets tricky. Programmers and developers usually don't really know how their code is being run amongst the CPUs! Each programming language and OS handles concurrency and parallelism differently. 
+In the OS, there is a concept of a &lt;strong&gt;process&lt;/strong&gt;, that is different from a CPU process. An OS process can use multiple cores and threads and allows shared memory between them, but two different OS processes are not allowed to read memory from each other.&lt;br&gt;
+Two separate OS processes can communicate through other means, like using IPC, shared files, etc. The important thing to note is that &lt;strong&gt;the OS disallows different processes from accessing each other's memory&lt;/strong&gt;, and this makes complete sense! You wouldn't want note-taking app reading your banking app's data.  &lt;/p&gt;
+&lt;p&gt;Generally, though, these are the concepts that are present in most programming languages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Asynchronous Programming&lt;/strong&gt;&lt;br&gt;
+As discussed before, context switching can be expensive. Async programming seeks to give some control over "context switching", back to the developer. An example scenario would be:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The developer runs an event loop handling two actions on one thread instead of two threads handling two actions.&lt;/li&gt;
+&lt;li&gt;The developer needs to make sure each process doesn't lock up (especially in IO-bound tasks), so that the loop can be completed many times a second.&lt;/li&gt;
+&lt;li&gt;There is no need for synchronization primitives like mutexes, because the order of operations within the loop is predetermined.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Multithreaded Programming&lt;/strong&gt;&lt;br&gt;
+Let the CPU and OS decide. This model requests a thread from the OS. The OS communicates with the CPU and gives the thread to the program. This way, the developer doesn't even need to worry about mixing IO-bound and CPU-bound tasks, because the CPU itself handles it through context switching and hyper-threading. Context switching can be expensive, though, especially if it happens often.  &lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;It is possible to mix multithreaded and async models to achieve the best of both, for example using 8 threads, each with an event loop.&lt;/p&gt;
+&lt;h3 id="implementation"&gt;Implementation&lt;/h3&gt;
+&lt;p&gt;How programming languages implement these concepts can be vastly different!&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Python&lt;/strong&gt;&lt;br&gt;
+Python is tricky because it uses something called GIL. Even in a multithreaded programming, all threads share the same interpreter lock, so parallelism isn't really possible in python when using multithreading from a single python interpreter.
+Python also has a multiprocessing module, which basically creates a separate interpreter and GIL altogether within another OS process! This is good for CPU-bound tasks, but it makes communication between the processes expensive and restrictive, since they don't and can't share the same memory anymore.
+Python also supports async programming.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Golang&lt;/strong&gt;&lt;br&gt;
+Go handles concurrency natively. It utilizes something called "task stealing", which basically means giving the Go interpreter some control over when context switching happens. The problem is that the CPUs context switching is more expensive than if the programming language itself handles it.&lt;br&gt;
+In Go's model, when an IO-bound task is happening in a goroutine, the Go runtime itself will "steal" the thread from that task and give it to another goroutine that needs it. This minimizes context switching within the Go runtime itself.&lt;br&gt;
+Note that this doesn't mean context switching won't happen at all! For example, if another program is running on the same core, the CPU will still have to manage it, so one process isn't taking up the core completely.  &lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="choosing"&gt;Choosing&lt;/h2&gt;
+&lt;p&gt;When choosing between parallelism and concurrency, I found it helpful to ask myself some questions:  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="mf"&gt;1.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Does&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;my&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;program&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;benefit&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;from&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;out&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;of&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ow"&gt;or&lt;/span&gt;&lt;span class="n"&gt;der&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;execution&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="mf"&gt;1.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;No&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;→&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;None&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Needed&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="mf"&gt;2.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Yes&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="mf"&gt;1.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Is&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;CPU&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;bound&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;calculation&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;heavy&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="w"&gt;            &lt;/span&gt;&lt;span class="mf"&gt;1.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Many&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;cores&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;available&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;
+&lt;span class="w"&gt;                &lt;/span&gt;&lt;span class="mf"&gt;1.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;No&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;→&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Use&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;sequential&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;functions&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;concurrency&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="n"&gt;roduces&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kr"&gt;cont&lt;/span&gt;&lt;span class="n"&gt;ext&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;switching&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ow"&gt;and&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;slows&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;code&lt;/span&gt;
+&lt;span class="w"&gt;                &lt;/span&gt;&lt;span class="mf"&gt;2.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Yes&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;→&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Use&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;parallelism&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kr"&gt;to&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;utilize&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;cores&lt;/span&gt;&lt;span class="mf"&gt;.&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="mf"&gt;2.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Is&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;I&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;O&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;bound&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;file&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kr"&gt;read&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="w"&gt;            &lt;/span&gt;&lt;span class="mf"&gt;1.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Many&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;cores&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;available&lt;/span&gt;&lt;span class="err"&gt;?&lt;/span&gt;
+&lt;span class="w"&gt;                &lt;/span&gt;&lt;span class="mf"&gt;1.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;No&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;→&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Use&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;concurrency&lt;/span&gt;&lt;span class="mf"&gt;.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kr"&gt;Cont&lt;/span&gt;&lt;span class="n"&gt;ext&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;switching&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;is&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;actually&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;beneficial&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;sin&lt;/span&gt;&lt;span class="n"&gt;ce&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kr"&gt;wait&lt;/span&gt;&lt;span class="n"&gt;ing&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kr"&gt;for&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;I&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;O&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;anyway&lt;/span&gt;&lt;span class="mf"&gt;.&lt;/span&gt;
+&lt;span class="w"&gt;                &lt;/span&gt;&lt;span class="mf"&gt;2.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Yes&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;→&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Use&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;concurrency&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;without&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;parallelism&lt;/span&gt;&lt;span class="mf"&gt;.&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Parallelism&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;doesn&lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;give&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;much&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;of&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;boost&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;I&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;O&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;blocks&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;either&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;way&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;After making the decision, research how it would be implemented in the specific programming language you are using. It might even be beneficial to think about specific sections of the code. For example, &lt;a href="https://docs.gtk.org/glib/threads.html"&gt;GLib&lt;/a&gt; gives an example about using async instead of multithreading:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;A common use for GThreads is to move a long-running blocking operation out of the main thread and into a worker thread. &lt;strong&gt;For GLib functions, such as single GIO operations, this is not necessary, and complicates the code. Instead, the &lt;code&gt;…_async()&lt;/code&gt; version of the function should be used from the main thread, eliminating the need for locking and synchronization between multiple threads&lt;/strong&gt;. If an operation does need to be moved to a worker thread, consider using &lt;code&gt;g_task_run_in_thread()&lt;/code&gt;, or a &lt;code&gt;GThreadPool&lt;/code&gt;. &lt;code&gt;GThreadPool&lt;/code&gt; is often a better choice than &lt;code&gt;GThread&lt;/code&gt;, as it handles thread reuse and task queuing; &lt;code&gt;GTask&lt;/code&gt; uses this internally.
+   However, if multiple blocking operations need to be performed in sequence, and it is not possible to use &lt;code&gt;GTask&lt;/code&gt; for them, moving them to a worker thread can clarify the code.&lt;/p&gt;
+&lt;/blockquote&gt;</content><category term="Concurrency vs Parallelism"></category><category term="asyncio"></category><category term="concurrency"></category><category term="parallelism"></category><category term="multicore"></category><category term="multithreading"></category><category term="multiprocessing"></category></entry></feed>
