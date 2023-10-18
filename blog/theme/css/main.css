@@ -8,12 +8,23 @@
 /* ==========================================================================
    Base styles: opinionated defaults
    ========================================================================== */
+:root {
+  --background-color: #000000;
+  --link-color: #92BFB1;
+  --shadow-and-date: #D44D5C;
+  --selection-color: #773344;
+  --hrule-color: #D44D5C;
+  --mark-text-color: #000;
+  --idk-what-this-is-supposed-to-be: #222;
+  --idk-what-this-is-either: #999;
+}
+
 html,
 button,
 input,
 select,
 textarea {
-  color: #222; }
+  color: var(--idk-what-this-is-supposed-to-be); }
 
 body {
   font-size: 1em;
@@ -25,11 +36,11 @@ body {
  * Customize the background color to match your design.
  */
 ::-moz-selection {
-  background: #b3d4fc;
+  background: var(--selection-color);
   text-shadow: none; }
 
 ::selection {
-  background: #b3d4fc;
+  background: var(--selection-color);
   text-shadow: none; }
 
 /*
@@ -39,7 +50,7 @@ hr {
   display: block;
   height: 1px;
   border: 0;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--hrule-color);
   margin: 1em 0;
   padding: 0; }
 
@@ -68,8 +79,8 @@ textarea {
    ========================================================================== */
 .chromeframe {
   margin: 0.2em 0;
-  background: #ccc;
-  color: #000;
+  background: var(--hrule-color);
+  color: var(--mark-text-color);
   padding: 0.2em 0; }
 
 /* ==========================================================================
@@ -79,19 +90,19 @@ textarea {
   margin-top: 1.5em;
   font-size: 0.7em;
   text-align: center;
-  color: #38c5c5; }
+  color: var(--link-color); }
   #site-info a {
-    color: #eeeeee; }
+    color: var(--background-color); }
 
 .side-shadow {
-  -webkit-box-shadow: 3px 0px 8px 0px #8e927e;
-  -moz-box-shadow: 3px 0px 8px 0px #8e927e;
-  box-shadow: 3px 0px 8px 0px #8e927e; }
+  -webkit-box-shadow: 3px 0px 8px 0px var(--accent-2);
+  -moz-box-shadow: 3px 0px 8px 0px var(--accent-2);
+  box-shadow: 3px 0px 8px 0px var(--accent-2); }
 
 .angle-shadow {
-  -webkit-box-shadow: 6px 6px 8px 3px #8e927e;
-  -moz-box-shadow: 6px 6px 8px 3px #8e927e;
-  box-shadow: 6px 6px 8px 3px #8e927e; }
+  -webkit-box-shadow: 6px 6px 8px 3px var(--accent-2);
+  -moz-box-shadow: 6px 6px 8px 3px var(--accent-2);
+  box-shadow: 6px 6px 8px 3px var(--accent-2); }
 
 /* ==========================================================================
    Helper classes
@@ -195,7 +206,7 @@ textarea {
 @media print {
   * {
     background: transparent !important;
-    color: #000 !important;
+    color: var(--mark-text-color) !important;
     /* Black prints faster: h5bp.com/s */
     box-shadow: none !important;
     text-shadow: none !important; }
@@ -220,7 +231,7 @@ textarea {
 
   pre,
   blockquote {
-    border: 1px solid #999;
+    border: 1px solid var(--idk-what-this-is-either);
     page-break-inside: avoid; }
 
   thead {

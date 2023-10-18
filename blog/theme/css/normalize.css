@@ -8,6 +8,12 @@
  * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
  */
 
+:root {
+    --mark-text-color: #000;
+    --mark-background-color: #F4AC45;
+    --idk-what-this-is-either-lol: #c0c0c0;
+}
+
 article,
 aside,
 details,
@@ -198,8 +204,8 @@ hr {
  */
 
 mark {
-    background: #ff0;
-    color: #000;
+    background: var(--mark-background-color);
+    color: var(--mark-text-color);
 }
 
 /**
@@ -370,7 +376,7 @@ form {
  */
 
 fieldset {
-    border: 1px solid #c0c0c0;
+    border: 1px solid var(--idk-what-this-is-either-lol);
     margin: 0 2px;
     padding: 0.35em 0.625em 0.75em;
 }

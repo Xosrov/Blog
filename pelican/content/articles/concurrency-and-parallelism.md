@@ -1,4 +1,4 @@
-Title: Differentiating Concurrent and Parallelism
+Title: Differentiating Concurrency and Parallelism
 Date: 2023-10-18
 Category: Concurrency vs Parallelism
 Tags: asyncio, concurrency, parallelism, multicore, multithreading, multiprocessing
@@ -51,9 +51,9 @@ In practice, modern CPUs use a mixture of hyper-threading and multicore architec
 
 ### Measuring CPU Performance  
 
-These are applicable for a single-core CPU:
-- IPC (Instruction Per Cycle/Clock) - How many things the CPU can do in one cycle.
-- Clock Speed tells you how many cycles the CPU can complete in a second.
+For a single-core CPU:  
+- IPC (Instruction Per Cycle/Clock) - How many things the CPU can do in one cycle.  
+- Clock Speed tells you how many cycles the CPU can complete in a second.  
 For example, while a CPU with a faster clock speed can complete more cycles in one second, a CPU with a higher IPC but lower clock speed might still be able to complete more tasks in one second.  
 
 Multicore architectures and hyper-threading complicate things, so always consider **benchmarking on the architecture you are working on**, because the same program could run very differently on different CPUs. 
@@ -82,8 +82,8 @@ It is possible to mix multithreaded and async models to achieve the best of both
 How programming languages implement these concepts can be vastly different!
 
 - **Python**  
-Python is tricky because it uses something called GIL. Even in a multithreaded programming, all threads share the same interpreter lock, so parallelism isn't really possible in python when using multithreading from a single python interpreter.
-Python also has a multiprocessing module, which basically creates a separate interpreter and GIL altogether within another OS process! This is good for CPU-bound tasks, but it makes communication between the processes expensive and restrictive, since they don't and can't share the same memory anymore.
+Python is tricky because it uses something called GIL. Even in a multithreaded programming, all threads share the same interpreter lock, so parallelism isn't really possible in python when using multithreading from a single python interpreter.  
+Python also has a multiprocessing module, which basically creates a separate interpreter and GIL altogether within another OS process! This is good for CPU-bound tasks, but it makes communication between the processes expensive and restrictive, since they don't and can't share the same memory anymore.  
 Python also supports async programming.
 
 - **Golang**  

@@ -1,12 +1,20 @@
+:root {
+  --background-color: #000000;
+  --text-color: #DAD6D6;
+  --link-color: #92BFB1;
+  --shadow-and-date: #D44D5C;
+  --code-block-bg: #e6e6e6;
+}
+
 body {
   /* background-color: $white; */
-  background: url("../img/stressed_linen/stressed_linen.png") repeat;
-  border-top: 6px solid #38c5c5; }
+  background: url("../img/footer_lodyas/footer_lodyas.png") repeat;
+  border-top: 6px solid var(--link-color); }
 
 #content-box {
   padding: 12px;
   /* margin: 5% auto; */
-  color: #eeeeee;
+  color: var(--background-color);
   font-family: "Lato", sans-serif;
   font-size: 1.2em;
   /* border-bottom: 2px solid $accent1; */ }
@@ -31,11 +39,11 @@ body {
     -o-transition: all 0.3s;
     transition: all 0.3s;
     display: inline-block;
-    color: #eeeeee;
+    color: var(--background-color);
     text-decoration: none; }
   .centered-nav a:hover {
-    color: #38c5c5;
-    text-shadow: 0 0 12px #8e927e; }
+    color: var(--link-color);
+    text-shadow: 0 0 12px var(--accent-2); }
 
 #nav-links {
   font-family: "Oswald", sans-serif;

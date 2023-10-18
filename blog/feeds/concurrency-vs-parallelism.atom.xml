@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Aliz Blog - Concurrency vs Parallelism</title><link href="https://xosrov.github.io/blog/" rel="alternate"></link><link href="https://xosrov.github.io/blog/feeds/concurrency-vs-parallelism.atom.xml" rel="self"></link><id>https://xosrov.github.io/blog/</id><updated>2023-10-18T00:00:00+00:00</updated><entry><title>Differentiating Concurrent and Parallelism</title><link href="https://xosrov.github.io/blog/concurrency-and-parallelism.html" rel="alternate"></link><published>2023-10-18T00:00:00+00:00</published><updated>2023-10-18T00:00:00+00:00</updated><author><name>Alireza Miryazdi</name></author><id>tag:xosrov.github.io,2023-10-18:/blog/concurrency-and-parallelism.html</id><summary type="html">&lt;p&gt;Differentiating concurrency and parallelism is confusing without understanding the underlying concepts first. This article aims to give you a pretty good understanding of the core concepts of concurrency, how it is handled by different programming languages, and gives some generic guidelines on when to use which.&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;a href="https://www.howtogeek.com/194756/cpu-basics-multiple-cpus-cores-and-hyper-threading-explained/"&gt;source 1&lt;/a&gt;&lt;br&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Aliz Blog - Concurrency vs Parallelism</title><link href="https://xosrov.github.io/blog/" rel="alternate"></link><link href="https://xosrov.github.io/blog/feeds/concurrency-vs-parallelism.atom.xml" rel="self"></link><id>https://xosrov.github.io/blog/</id><updated>2023-10-18T00:00:00+00:00</updated><entry><title>Differentiating Concurrency and Parallelism</title><link href="https://xosrov.github.io/blog/concurrency-and-parallelism.html" rel="alternate"></link><published>2023-10-18T00:00:00+00:00</published><updated>2023-10-18T00:00:00+00:00</updated><author><name>Alireza Miryazdi</name></author><id>tag:xosrov.github.io,2023-10-18:/blog/concurrency-and-parallelism.html</id><summary type="html">&lt;p&gt;Differentiating concurrency and parallelism is confusing without understanding the underlying concepts first. This article aims to give you a pretty good understanding of the core concepts of concurrency, how it is handled by different programming languages, and gives some generic guidelines on when to use which.&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;a href="https://www.howtogeek.com/194756/cpu-basics-multiple-cpus-cores-and-hyper-threading-explained/"&gt;source 1&lt;/a&gt;&lt;br&gt;
 &lt;a href="https://www.intel.com/content/www/us/en/gaming/resources/hyper-threading.html"&gt;source 2&lt;/a&gt;&lt;br&gt;
 &lt;a href="https://www.baeldung.com/cs/multithreading-vs-hyperthreading"&gt;source 3&lt;/a&gt;  &lt;/p&gt;
 &lt;div class="toc"&gt;&lt;span class="toctitle"&gt;Table of contents:&lt;/span&gt;&lt;ul&gt;
@@ -57,9 +57,9 @@ Each core can, itself, act as many cores. The CPU handles parallel tasks within 
 &lt;/ul&gt;
 &lt;p&gt;In practice, modern CPUs use a mixture of hyper-threading and multicore architectures, having the best of both worlds!&lt;/p&gt;
 &lt;h3 id="measuring-cpu-performance"&gt;Measuring CPU Performance&lt;/h3&gt;
-&lt;p&gt;These are applicable for a single-core CPU:
-- IPC (Instruction Per Cycle/Clock) - How many things the CPU can do in one cycle.
-- Clock Speed tells you how many cycles the CPU can complete in a second.
+&lt;p&gt;For a single-core CPU:&lt;br&gt;
+- IPC (Instruction Per Cycle/Clock) - How many things the CPU can do in one cycle.&lt;br&gt;
+- Clock Speed tells you how many cycles the CPU can complete in a second.&lt;br&gt;
 For example, while a CPU with a faster clock speed can complete more cycles in one second, a CPU with a higher IPC but lower clock speed might still be able to complete more tasks in one second.  &lt;/p&gt;
 &lt;p&gt;Multicore architectures and hyper-threading complicate things, so always consider &lt;strong&gt;benchmarking on the architecture you are working on&lt;/strong&gt;, because the same program could run very differently on different CPUs. &lt;/p&gt;
 &lt;h2 id="programming-concepts"&gt;Programming Concepts&lt;/h2&gt;
@@ -88,8 +88,8 @@ Let the CPU and OS decide. This model requests a thread from the OS. The OS comm
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;strong&gt;Python&lt;/strong&gt;&lt;br&gt;
-Python is tricky because it uses something called GIL. Even in a multithreaded programming, all threads share the same interpreter lock, so parallelism isn't really possible in python when using multithreading from a single python interpreter.
-Python also has a multiprocessing module, which basically creates a separate interpreter and GIL altogether within another OS process! This is good for CPU-bound tasks, but it makes communication between the processes expensive and restrictive, since they don't and can't share the same memory anymore.
+Python is tricky because it uses something called GIL. Even in a multithreaded programming, all threads share the same interpreter lock, so parallelism isn't really possible in python when using multithreading from a single python interpreter.&lt;br&gt;
+Python also has a multiprocessing module, which basically creates a separate interpreter and GIL altogether within another OS process! This is good for CPU-bound tasks, but it makes communication between the processes expensive and restrictive, since they don't and can't share the same memory anymore.&lt;br&gt;
 Python also supports async programming.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;

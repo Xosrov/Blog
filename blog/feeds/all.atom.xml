@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Aliz Blog</title><link href="https://xosrov.github.io/blog/" rel="alternate"></link><link href="https://xosrov.github.io/blog/feeds/all.atom.xml" rel="self"></link><id>https://xosrov.github.io/blog/</id><updated>2023-10-18T00:00:00+00:00</updated><entry><title>Differentiating Concurrent and Parallelism</title><link href="https://xosrov.github.io/blog/concurrency-and-parallelism.html" rel="alternate"></link><published>2023-10-18T00:00:00+00:00</published><updated>2023-10-18T00:00:00+00:00</updated><author><name>Alireza Miryazdi</name></author><id>tag:xosrov.github.io,2023-10-18:/blog/concurrency-and-parallelism.html</id><summary type="html">&lt;p&gt;Differentiating concurrency and parallelism is confusing without understanding the underlying concepts first. This article aims to give you a pretty good understanding of the core concepts of concurrency, how it is handled by different programming languages, and gives some generic guidelines on when to use which.&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;a href="https://www.howtogeek.com/194756/cpu-basics-multiple-cpus-cores-and-hyper-threading-explained/"&gt;source 1&lt;/a&gt;&lt;br&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Aliz Blog</title><link href="https://xosrov.github.io/blog/" rel="alternate"></link><link href="https://xosrov.github.io/blog/feeds/all.atom.xml" rel="self"></link><id>https://xosrov.github.io/blog/</id><updated>2023-10-18T00:00:00+00:00</updated><entry><title>Differentiating Concurrency and Parallelism</title><link href="https://xosrov.github.io/blog/concurrency-and-parallelism.html" rel="alternate"></link><published>2023-10-18T00:00:00+00:00</published><updated>2023-10-18T00:00:00+00:00</updated><author><name>Alireza Miryazdi</name></author><id>tag:xosrov.github.io,2023-10-18:/blog/concurrency-and-parallelism.html</id><summary type="html">&lt;p&gt;Differentiating concurrency and parallelism is confusing without understanding the underlying concepts first. This article aims to give you a pretty good understanding of the core concepts of concurrency, how it is handled by different programming languages, and gives some generic guidelines on when to use which.&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;a href="https://www.howtogeek.com/194756/cpu-basics-multiple-cpus-cores-and-hyper-threading-explained/"&gt;source 1&lt;/a&gt;&lt;br&gt;
 &lt;a href="https://www.intel.com/content/www/us/en/gaming/resources/hyper-threading.html"&gt;source 2&lt;/a&gt;&lt;br&gt;
 &lt;a href="https://www.baeldung.com/cs/multithreading-vs-hyperthreading"&gt;source 3&lt;/a&gt;  &lt;/p&gt;
 &lt;div class="toc"&gt;&lt;span class="toctitle"&gt;Table of contents:&lt;/span&gt;&lt;ul&gt;
@@ -57,9 +57,9 @@ Each core can, itself, act as many cores. The CPU handles parallel tasks within 
 &lt;/ul&gt;
 &lt;p&gt;In practice, modern CPUs use a mixture of hyper-threading and multicore architectures, having the best of both worlds!&lt;/p&gt;
 &lt;h3 id="measuring-cpu-performance"&gt;Measuring CPU Performance&lt;/h3&gt;
-&lt;p&gt;These are applicable for a single-core CPU:
-- IPC (Instruction Per Cycle/Clock) - How many things the CPU can do in one cycle.
-- Clock Speed tells you how many cycles the CPU can complete in a second.
+&lt;p&gt;For a single-core CPU:&lt;br&gt;
+- IPC (Instruction Per Cycle/Clock) - How many things the CPU can do in one cycle.&lt;br&gt;
+- Clock Speed tells you how many cycles the CPU can complete in a second.&lt;br&gt;
 For example, while a CPU with a faster clock speed can complete more cycles in one second, a CPU with a higher IPC but lower clock speed might still be able to complete more tasks in one second.  &lt;/p&gt;
 &lt;p&gt;Multicore architectures and hyper-threading complicate things, so always consider &lt;strong&gt;benchmarking on the architecture you are working on&lt;/strong&gt;, because the same program could run very differently on different CPUs. &lt;/p&gt;
 &lt;h2 id="programming-concepts"&gt;Programming Concepts&lt;/h2&gt;
@@ -88,8 +88,8 @@ Let the CPU and OS decide. This model requests a thread from the OS. The OS comm
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;strong&gt;Python&lt;/strong&gt;&lt;br&gt;
-Python is tricky because it uses something called GIL. Even in a multithreaded programming, all threads share the same interpreter lock, so parallelism isn't really possible in python when using multithreading from a single python interpreter.
-Python also has a multiprocessing module, which basically creates a separate interpreter and GIL altogether within another OS process! This is good for CPU-bound tasks, but it makes communication between the processes expensive and restrictive, since they don't and can't share the same memory anymore.
+Python is tricky because it uses something called GIL. Even in a multithreaded programming, all threads share the same interpreter lock, so parallelism isn't really possible in python when using multithreading from a single python interpreter.&lt;br&gt;
+Python also has a multiprocessing module, which basically creates a separate interpreter and GIL altogether within another OS process! This is good for CPU-bound tasks, but it makes communication between the processes expensive and restrictive, since they don't and can't share the same memory anymore.&lt;br&gt;
 Python also supports async programming.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
@@ -163,8 +163,8 @@ Note that this doesn't mean context switching won't happen at all! For example, 
 &lt;p&gt;Natural images, like the one above, are perfect subjects for JPEGs compression. This is tied to the compression algorithm itself, but also to our eyes and how we see the world.  &lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;The JPEGs algorithm doesn't do well when there are &lt;strong&gt;stark&lt;/strong&gt; color differences. Most natural pictures don't have these sharp changes in color, and JPEG artifacts are less visible. However, if you've ever used JPEG compression for an image of a logo, for example, you might have seen that the edges become blurry.  &lt;/li&gt;
-&lt;li&gt;JPEG takes advantage of weaknesses in our eyes and brain; take the image above, for example.&lt;br&gt;
-        - The region in the top right is a very smooth gradient of blue, and our eyes don't really care if we use the same shade of blue for very similar pixels.   &lt;ul&gt;
+&lt;li&gt;JPEG takes advantage of weaknesses in our eyes and brain; take the image above, for example.  &lt;ul&gt;
+&lt;li&gt;The region in the top right is a very smooth gradient of blue, and our eyes don't really care if we use the same shade of blue for very similar pixels.   &lt;/li&gt;
 &lt;li&gt;For regions like the bottom left, even though there are a lot of stark color differences, our eyes glance over them! Our brains won't notice compression artifacts unless we are looking for them.  &lt;/li&gt;
 &lt;li&gt;Our eyes have 100 million rod cells, but only 6 million cone cells. This means our eyes are much more sensitive to brightness and luminance, rather than color or chrominance. JPEG discards some color information, but keeps all the luminance information, and our eyes never notice.  &lt;/li&gt;
 &lt;/ul&gt;
@@ -204,7 +204,7 @@ X_{2\pi }(\omega )=\sum _{n=-\infty }^{\infty }x[n]\,e^{-i\omega n}
 $$&lt;/p&gt;
 &lt;p&gt;This is better, because the steps are discrete instead of continuous. Still, there are infinite values! So next up, Discrete Fourier Transform (DFT) comes up:&lt;br&gt;
 $$
-{\displaystyle X_k=\sum &lt;em n&gt;{n=0}^{N-1}x&lt;/em&gt;\cdot e^{-{\frac {i2\pi }{N}}kn}}
+{\displaystyle X_k=\sum _{n=0}^{N-1}x_n\cdot e^{-{\frac {i2\pi }{N}}kn}}
 $$&lt;/p&gt;
 &lt;p&gt;DFT (Equivalent to FFT), has discrete steps, but it is also in a finite range! This makes it usable by computers.  &lt;/p&gt;
 &lt;p&gt;Assume we have a sound wave, and we want to analyze what frequencies are within it. Sound waves are continuous, but when recording, we can only record a finite number of samples! In truth, using DFT loses some frequency information compared to if FT. However, if the sample numbers in a fixed time increase, the difference would be negligible for most functions.  &lt;/p&gt;
@@ -317,12 +317,14 @@ $$&lt;/p&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h4 id="why-is-dct-useful"&gt;Why is DCT Useful?&lt;/h4&gt;
-&lt;p&gt;One of the greatest features of using DCT (or the Cosine Series), as opposed to DFT and DST, is that DCT has a higher "&lt;em&gt;energy concentration&lt;/em&gt;" in the first few terms.&lt;br&gt;
-- In approximating continuous functions using Cosine Series, this means we can discard all other terms after, say, the 3rd, and we would have a good approximation of the function.&lt;br&gt;
-- In discrete functions, such as the pixel example, discarding the last few terms effectively means we are losing fine detail; but keeping the most important terms of the transform.  &lt;/p&gt;
+&lt;p&gt;One of the greatest features of using DCT (or the Cosine Series), as opposed to DFT and DST, is that DCT has a higher "&lt;em&gt;energy concentration&lt;/em&gt;" in the first few terms.  &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In approximating continuous functions using Cosine Series, this means we can discard all other terms after, say, the 3rd, and we would have a good approximation of the function.  &lt;/li&gt;
+&lt;li&gt;In discrete functions, such as the pixel example, discarding the last few terms effectively means we are losing fine detail; but keeping the most important terms of the transform.  &lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;Take this example from before, showing 8 pixels.&lt;br&gt;
 &lt;img alt="1D pixel array of size 8" src="https://xosrov.github.io/blog/images/5678a62fccf66dccd73d623be15a95cc.png"&gt;&lt;/p&gt;
-&lt;p&gt;These values contain all the information necessary to define the eight pixels. Thus, the ultimate goal is to compress this data, so it can be stored or transmitted and later decompressed to reform the original image. However, simple entropy or statistical encoding of this data will not be extremely effective [[#What is Entropy Compression|because in continuous tone images, the levels of luminosity have equal probabilities of occurring]].  &lt;/p&gt;
+&lt;p&gt;These values contain all the information necessary to define the eight pixels. Thus, the ultimate goal is to compress this data, so it can be stored or transmitted and later decompressed to reform the original image. However, simple entropy or statistical encoding of this data will not be extremely effective &lt;a href="#What is Entropy Compression"&gt;because in continuous tone images, the levels of luminosity have equal probabilities of occurring&lt;/a&gt;.  &lt;/p&gt;
 &lt;p&gt;The purpose of the DCT transformation phase is to identify "pieces of information in the image’s signal that can be effectively ‘thrown away’ without seriously compromising the quality of the image" (Nelson 359).  &lt;/p&gt;
 &lt;p&gt;Applying the discrete cosine transform (DCT) and selectively discarding high frequency DCT coefficients is a common technique in lossy image and video compression. This process skews or alters the data by removing high frequency components, eliminating fine details and making the data more uniform. Entropy compression can then be applied to compress the skewed data.  &lt;/p&gt;
 &lt;p&gt;In JPEG encoding, this process is applied to every &lt;strong&gt;8x8 pixel grid&lt;/strong&gt; in the image. While the exact process of DCT in 2D was not covered, it is essentially the same process. An 8x8 pixel grid had 64 waveforms that look like this:&lt;br&gt;
@@ -636,9 +638,11 @@ This is calculated for all the values, and this is the result:  &lt;/p&gt;
 &lt;p&gt;The higher values of $T$ in the bottom right cause the final values to be zero in those ranges. This effectively allows data compression by discarding information.  &lt;/p&gt;
 &lt;h4 id="where-does-the-quantization-table-come-from"&gt;Where Does the Quantization Table Come From&lt;/h4&gt;
 &lt;p&gt;There are many ways to choose a quantization table, and each compression level has its own quantization table. The bottom right values are usually very high, though, since high-frequency data is usually discarded.&lt;br&gt;
-Finding the exact quantization table can be done in different ways:&lt;br&gt;
-- Measuring the mathematical error found between an input image and its output image after it has been decompressed, trying to determine an acceptable level of error.&lt;br&gt;
-- Using other quality assessment methods, such as methods reliant on machine learning. These try to achieve the same visual quality by tuning the quantization values.  &lt;/p&gt;
+Finding the exact quantization table can be done in different ways:  &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Measuring the mathematical error found between an input image and its output image after it has been decompressed, trying to determine an acceptable level of error.  &lt;/li&gt;
+&lt;li&gt;Using other quality assessment methods, such as methods reliant on machine learning. These try to achieve the same visual quality by tuning the quantization values.  &lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id="run-length-huffman-coding"&gt;Run Length &amp;amp; Huffman Coding&lt;/h2&gt;
 &lt;p&gt;This is the final step. It is basically an entropy compression method. This process is &lt;mark&gt;lossless&lt;/mark&gt;. First, the quantized values are listed in a &lt;a href="https://en.wikipedia.org/wiki/JPEG#/media/File:JPEG_ZigZag.svg"&gt;zigzag pattern&lt;/a&gt; seen below.&lt;br&gt;
 &lt;img alt="zigzag pattern" src="https://xosrov.github.io/blog/images/d7b726da3c3eb6f300ccdada4f2861e4.png"&gt;

@@ -42,8 +42,7 @@ MARKDOWN = {
             'title': 'Table of contents:' 
         },
         'markdown.extensions.codehilite': {
-            'css_class': 
-            'highlight'
+            'css_class': 'highlight'
         },
         "pymdownx.mark": {},
         'markdown.extensions.extra': {},

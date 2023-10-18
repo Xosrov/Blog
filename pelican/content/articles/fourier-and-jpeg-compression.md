@@ -26,7 +26,7 @@ Natural images, like the one above, are perfect subjects for JPEGs compression. 
 
 - The JPEGs algorithm doesn't do well when there are **stark** color differences. Most natural pictures don't have these sharp changes in color, and JPEG artifacts are less visible. However, if you've ever used JPEG compression for an image of a logo, for example, you might have seen that the edges become blurry.  
 - JPEG takes advantage of weaknesses in our eyes and brain; take the image above, for example.  
-		- The region in the top right is a very smooth gradient of blue, and our eyes don't really care if we use the same shade of blue for very similar pixels.   
+    - The region in the top right is a very smooth gradient of blue, and our eyes don't really care if we use the same shade of blue for very similar pixels.   
 	 - For regions like the bottom left, even though there are a lot of stark color differences, our eyes glance over them! Our brains won't notice compression artifacts unless we are looking for them.  
 	 - Our eyes have 100 million rod cells, but only 6 million cone cells. This means our eyes are much more sensitive to brightness and luminance, rather than color or chrominance. JPEG discards some color information, but keeps all the luminance information, and our eyes never notice.  
 
@@ -84,7 +84,7 @@ $$
 
 This is better, because the steps are discrete instead of continuous. Still, there are infinite values! So next up, Discrete Fourier Transform (DFT) comes up:  
 $$
-{\displaystyle X_k=\sum _{n=0}^{N-1}x_{n}\cdot e^{-{\frac {i2\pi }{N}}kn}}
+{\displaystyle X_k=\sum _{n=0}^{N-1}x_n\cdot e^{-{\frac {i2\pi }{N}}kn}}
 $$
 
 DFT (Equivalent to FFT), has discrete steps, but it is also in a finite range! This makes it usable by computers.  
@@ -218,13 +218,14 @@ animate_dcosine_transform()
 #### Why is DCT Useful?  
 
 One of the greatest features of using DCT (or the Cosine Series), as opposed to DFT and DST, is that DCT has a higher "*energy concentration*" in the first few terms.  
+
 - In approximating continuous functions using Cosine Series, this means we can discard all other terms after, say, the 3rd, and we would have a good approximation of the function.  
 - In discrete functions, such as the pixel example, discarding the last few terms effectively means we are losing fine detail; but keeping the most important terms of the transform.  
 
 Take this example from before, showing 8 pixels.  
 ![1D pixel array of size 8]({static}/images/5678a62fccf66dccd73d623be15a95cc.png)
 
-These values contain all the information necessary to define the eight pixels. Thus, the ultimate goal is to compress this data, so it can be stored or transmitted and later decompressed to reform the original image. However, simple entropy or statistical encoding of this data will not be extremely effective [[#What is Entropy Compression|because in continuous tone images, the levels of luminosity have equal probabilities of occurring]].  
+These values contain all the information necessary to define the eight pixels. Thus, the ultimate goal is to compress this data, so it can be stored or transmitted and later decompressed to reform the original image. However, simple entropy or statistical encoding of this data will not be extremely effective [because in continuous tone images, the levels of luminosity have equal probabilities of occurring](#What is Entropy Compression).  
 
 The purpose of the DCT transformation phase is to identify "pieces of information in the image’s signal that can be effectively ‘thrown away’ without seriously compromising the quality of the image" (Nelson 359).  
  
@@ -294,6 +295,7 @@ The higher values of $T$ in the bottom right cause the final values to be zero i
 
 There are many ways to choose a quantization table, and each compression level has its own quantization table. The bottom right values are usually very high, though, since high-frequency data is usually discarded.  
 Finding the exact quantization table can be done in different ways:  
+
 - Measuring the mathematical error found between an input image and its output image after it has been decompressed, trying to determine an acceptable level of error.  
 - Using other quality assessment methods, such as methods reliant on machine learning. These try to achieve the same visual quality by tuning the quantization values.  
 

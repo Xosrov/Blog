@@ -1,10 +1,23 @@
+:root {
+  --background-color: #000000;
+  --text-color: #DAD6D6;
+  --link-color: #92BFB1;
+  --shadow-and-date: #D44D5C;
+  --code-block-bg: #e6e6e6;
+  --equation-text-color: #DAD6D6;
+}
+
 body {
-  color: #272822;
-  background-color: #eeeeee;
+  color: var(--text-color);
+  background-color: var(--background-color);
   font-family: "Lato", sans-serif; }
 
+.MathJax * {
+  color: var(--equation-text-color) !important;
+}
+
 #sidebar {
-  background: url("../img/stressed_linen/stressed_linen.png") repeat;
+  background: url("../img/footer_lodyas/footer_lodyas.png") repeat;
   position: fixed;
   left: 0;
   bottom: 0;
@@ -14,9 +27,9 @@ body {
   min-width: 200px;
   padding-left: 8px;
   padding-right: 8px;
-  color: #eeeeee; }
+  color: var(--background-color); }
   #sidebar a {
-    color: #eeeeee;
+    color: var(--background-color);
     text-decoration: none; }
 
 #site-title {
@@ -28,7 +41,7 @@ body {
   -o-transition: all 0.3s;
   transition: all 0.3s; }
   #site-title:hover {
-    color: #38c5c5; }
+    color: var(--link-color); }
 
 #site-desc {
   font-size: 1.3em;
@@ -52,7 +65,7 @@ body {
     padding: 0 24px;
     border-radius: 24px;
     display: inline-block;
-    border: 3px solid #eeeeee;
+    border: 3px solid var(--background-color);
     line-height: 1.8em;
     -webkit-transition: all 0.3s;
     -moz-transition: all 0.3s;
@@ -60,8 +73,8 @@ body {
     -o-transition: all 0.3s;
     transition: all 0.3s; }
   #nav-links a:hover {
-    border-color: #38c5c5;
-    color: #38c5c5; }
+    border-color: var(--link-color);
+    color: var(--link-color); }
 
 #post-list {
   list-style: none; }
@@ -73,18 +86,18 @@ body {
   font-family: "Oswald", sans-serif;
   font-variant: bold; }
   .entry-header a {
-    color: #272822;
+    color: var(--text-color);
     text-decoration: none; }
   .entry-header a:hover {
-    color: #38c5c5;
+    color: var(--link-color);
     text-decoration: none; }
   .entry-header time {
-    color: #8e927e; }
+    color: var(--accent-2); }
   .entry-header h1 {
     margin: 0.5em 0; }
 
 .post-content a {
-  color: #38c5c5; }
+  color: var(--link-color); }
 .post-content img {
   display: block;
   margin: 0 auto;
@@ -93,7 +106,7 @@ body {
   font-style: italic; }
 .post-content pre {
   font-size: 13px;
-  background-color: #e6e6e6;
+  background-color: var(--code-block-bg);
   padding: 10px;
   margin: 10px;
   overflow: auto;
@@ -101,7 +114,7 @@ body {
 
 .post-meta a {
   font-style: italic;
-  color: #38c5c5; }
+  color: var(--link-color); }
 
 .paginator {
   text-align: center;
@@ -109,10 +122,10 @@ body {
   font-size: 1.4em;
   font-family: "Oswald", sans-serif; }
   .paginator a {
-    color: #272822;
+    color: var(--text-color);
     text-decoration: none; }
     .paginator a:hover {
-      color: #38c5c5; }
+      color: var(--link-color); }
 
 /* ==========================================================================
    EXAMPLE Media Queries for Responsive Design.
@@ -152,9 +165,9 @@ body {
     margin-left: 18px; }
 
   .side-shadow {
-    -webkit-box-shadow: 0 3px 12px 3px #8e927e;
-    -moz-box-shadow: 0 3px 12px 3px #8e927e;
-    box-shadow: 0 3px 12px 3px #8e927e; }
+    -webkit-box-shadow: 0 3px 12px 3px var(--accent-2);
+    -moz-box-shadow: 0 3px 12px 3px var(--accent-2);
+    box-shadow: 0 3px 12px 3px var(--accent-2); }
 
   .post-entry {
     padding: 0 12px; } }
