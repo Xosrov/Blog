@@ -2,7 +2,7 @@
   --background-color: #000000;
   --text-color: #DAD6D6;
   --link-color: #92BFB1;
-  --shadow-and-date: #D44D5C;
+  --shadow-and-date: #CC2936;
   --code-block-bg: #e6e6e6;
   --equation-text-color: #DAD6D6;
 }
@@ -27,9 +27,9 @@ body {
   min-width: 200px;
   padding-left: 8px;
   padding-right: 8px;
-  color: var(--background-color); }
+  color: var(--shadow-and-date); }
   #sidebar a {
-    color: var(--background-color);
+    color: var(--shadow-and-date);
     text-decoration: none; }
 
 #site-title {

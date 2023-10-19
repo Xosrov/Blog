@@ -541,9 +541,9 @@ a {
     background-color: var(--main_bg_2);
     border: .5vh solid var(--text_1);
     width: 8vh;
+    font-size: 2.8vh;
     text-decoration: none;
-    color: var(--text_2);
-    animation: textBlink 0.8s linear infinite alternate;
+    color: var(--text_1);
 }
 
 .day:hover,

@@ -1,5 +1,5 @@
 AUTHOR = 'Alireza Miryazdi (Xosrov)'
-SITENAME = 'Aliz Blog'
+SITENAME = 'Alix Tech Blog'
 SITEURL = '/blog'
 OUTPUT_PATH = '../blog'
 MENUITEMS = [('CV', '/'), ('Blog', '/blog/')]

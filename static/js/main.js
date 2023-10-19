@@ -7,11 +7,11 @@ let cssVariables = [
     "--other",
 ]
 let nightColors = [
-  "#034078",
-  "#1282a2",
-  "#0a1128",
-  "#001f54",
-  "#fefcfb",
+  "#2a1e1d",
+  "#77615f",
+  "#F3D9DC",
+  "#b17a3f",
+  "#c67b5b",
 ];
 let dayColors = [
   "#cbf3f0",
