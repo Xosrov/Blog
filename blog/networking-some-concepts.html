@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+            tex2jax: {inlineMath: [['$','$'], ['\\\\(','\\\\)']],processEscapes: true}
+            });
+        </script>
+        <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>    Some Basic Networking Concepts
+</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+            <link rel="stylesheet" href="/blog/theme/css/normalize.css">
+        <link href='//fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+        <link href='//fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/blog/theme/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/blog/theme/css/main.css">
+
+    <link rel="stylesheet" href="/blog/theme/css/blog.css">
+    <link rel="stylesheet" href="/blog/theme/css/monokai.css">
+        <script src="/blog/theme/js/vendor/modernizr-2.6.2.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+        <div id="wrapper">
+<header id="sidebar" class="side-shadow">
+    <hgroup id="site-header">
+        <a id="site-title" href="/blog"><h1> Mindmap <i class="icon-fire"></i></h1></a>
+        <p id="site-desc"></p>
+    </hgroup>
+    <nav>
+        <ul id="nav-links">
+                <li><a href="/blog/">Blog</a></li>
+                <li><a href="/blog/pages/contact.html">Contact</a></li>
+                <li><a href="/blog/..">CV</a></li>
+        </ul>
+    </nav>
+<footer id="site-info">
+    <p>
+        Proudly powered by <a href="http://getpelican.com/" target="pelican">Pelican</a> and <a href="http://python.org/" target="python">Python</a>. Theme by <a href="https://github.com/hdra/pelican-cait" target="github">hndr</a>.
+    </p>
+    <p>
+        Textures by <a href="http://subtlepatterns.com/" target="subtlepatterns">Subtle Pattern</a>. Font Awesome by <a href="http://fortawesome.github.io/Font-Awesome/" target="github">Dave Grandy</a>.
+    </p>
+</footer></header>
+    <div id="post-container">
+        <ol id="post-list">
+            <li>
+                <article class="post-entry">
+                    <header class="entry-header">
+                        <time class="post-time" datetime="2023-11-17T00:00:00+00:00" pubdate>
+                            Fri 17 November 2023
+                        </time>
+                        <a href="/blog/networking-some-concepts.html" rel="bookmark"><h1>Some Basic Networking Concepts</h1></a>
+                    </header>
+
+                    <section class="post-content">
+                        <h2 id="part-1-some-questions-and-answers">Part 1 - Some Questions and Answers</h2>
+<h3 id="what-are-the-private-ip-addresses">What are the private IP addresses?</h3>
+<p>Internal addresses within a closed network, that are non-routable from clients outside it. They are unique within the network, but differenxt networks can have the same private address, unlike a public IP address that is unique globally.<br>
+The addresses below (IPv4) are designated as private, and are chosen for networks of different sizes, from large to small (see also <a href="#what-is-subnet-mask">Subnet Mask</a>):<br>
+- 10.0.0.0/8<br>
+- 172.16.0.0/12<br>
+- 192.168.0.0/16  </p>
+<h3 id="what-is-subnet-mask">What is Subnet Mask?</h3>
+<p>Subnet masks are used to create subnetworks within larger IP networks, allowing efficient allocation of IP addresses and improved network management.<br>
+In short, it specifies the valid network IP ranges within the network.  </p>
+<p><strong>An example</strong>:<br>
+172.27.76.0/22 shows a network in CIDR format which is equivalent to a netmask of <code>255.255.252.0</code>, and specifies IP addresses in the range <code>172.27.76.1</code> to <code>172.27.79.255</code>. The final address specifies a <strong>broadcast</strong> address, which can be used to broadcast to all devices in the network.  </p>
+<h3 id="what-is-port">What is Port?</h3>
+<p>Number assigned to uniquely identify a connection endpoint and to direct data to a specific service. At the software level, within an operating system. All valid port numbers are in the range <code>0-65535</code>, with some being commonly used for specific types of software.  </p>
+<h3 id="what-is-port-forwarding">What is Port forwarding?</h3>
+<p>An intercepting application/device reads the packet header, notes the destination, and then rewrites the header information and sends it to another computer, one that’s different from the one intended. The destination can also have a different port than the one intended.  </p>
+<p>Port forwarding can also be used to enable remote access to services hosted on private networks.<br>
+An example of post forwarding can happen when using Docker (software level) and by some network routers (hardware-level).  </p>
+<h3 id="what-is-router">What is Router?</h3>
+<p>A router is a physical or virtual appliance that passes information between two or more packet-switched computer networks -- analyzing a given data packet's destination IP address, calculating the best way for it to reach that destination, and then forwarding it accordingly.<br>
+A router is different from a modem; a router forms networks and manages the flow of data within and between those networks, while a modem connects those networks to the internet. A single device may plug into a modem in order to connect to the internet, while a router can help distribute this signal to multiple devices within an established network and allow all of them to access the internet.  </p>
+<h3 id="difference-between-switch-and-hub">Difference between Switch and Hub</h3>
+<p>A hub is simply a multiport Ethernet repeater that operates at the physical level (layer 1). When the hub receives information from a sending device, it simply repeats, or broadcasts, that same information out all ports on the hub.<br>
+To fix the problem of all connected devices receiving the same broadcast (which is a problem for large networks), the network switch is used.<br>
+- Firstly, a switch segments the network into multiple logical LANs known as VLANs, which reduces broadcast congestion on a larger network by breaking up the broadcast procedure.<br>
+- Secondly, a layer 2 switch can maintain a list of a switch port number along with the MAC address of the device connected to it. This way, if the switch knows the specific port that the MAC address corresponds to, it is sent only out that port as a Unicast frame.  </p>
+<h3 id="what-is-dns">What is DNS?</h3>
+<p>DNS translates domain names to IP addresses, so browsers can load Internet resources. DNS servers eliminate the need for humans to memorize IP addresses such as 192.168.1.1 (in IPv4), or more complex newer alphanumeric IP addresses such as 2400:cb00:2048:1::c629:d7a2 (in IPv6).  </p>
+<p>### What is Gateway?</p>
+<p>Also known as a protocol converter. It connects the computers of one network to another and defines the boundaries of the network. If two networks with different protocols want to be connected to each other, both networks need to have gateways that provide a point of presence and entry for computers from both networks to communicate.  </p>
+<p>In other words, gateways can join different systems.  </p>
+<h3 id="what-is-dhcp">What is DHCP?</h3>
+<p>Protocol, mainly for assigning IP address to devices in a private network.
+The DHCP server manages requests for IP addresses from the network and keeps a record of all the IP addresses it assigns and to which devices it assigns them. It also maintains an IP address pool to choose from.<br>
+The DHCP can tell different devices on the network apart using their MAC. In most home internet setups, the DHCP server is implemented inside the router.  </p>
+<h3 id="difference-between-tcp-and-udp">Difference between TCP and UDP</h3>
+<ul>
+<li><strong>Connection Versus Connectionless</strong><br>
+    In TCP/IP, the two ends of the communication link must be connected at all times during the communication. An application using UDP prepares a packet and sends it to the receiver's address without first checking to see if the receiver is ready to receive a packet, hence the packet may get lost.  </li>
+<li><strong>Stream Versus Packet</strong><br>
+    The TCP/IP stack is responsible for breaking the stream of data into packets and sending those packets, while the stack at the other end is responsible for reassembling the packets into a data stream using information in the packet headers. UDP, on the other hand, is a packet-oriented protocol where the application itself divides the data into packets and sends them to the other end.  </li>
+<li><strong>Reliability</strong><br>
+    The packets that are sent by TCP/IP contain a unique sequence number. This helps with retransmitting lost packets, and reconstructing the packets in correct order.  </li>
+</ul>
+<h3 id="difference-between-bandwidth-and-latency">Difference between Bandwidth and Latency</h3>
+<p>Throughput is also covered, since it is very relevant to the other two.  </p>
+<ul>
+<li>Bandwidth is the maximum amount of data that can be transferred in a given amount of time. There are two pieces to bandwidth: upload speed and download speed.  </li>
+<li>Latency refers to how long it takes for data to travel from one point to another. This is also referred to as ping time or lag.  </li>
+<li>Throughput is how much data was transferred in that amount of time, while bandwidth is how much data could be transferred. In other words, throughput is what actually happened while bandwidth is the theoretical prediction.<br>
+<strong>An analogy</strong>:
+Think of a highway (bandwidth) with a toll booth (latency). The highway has a certain maximum capacity, like a network's bandwidth. The toll booth adds a delay, similar to network latency. The actual number of cars passing through the toll booth per hour represents throughput, which can be lower than the highway's maximum capacity due to the toll booth's delay.  </li>
+</ul>
+<h3 id="what-is-a-mac-address">What is a MAC address?</h3>
+<p>Like each house has its own postal address, every device has a Media Access Control (MAC) address assigned to it by the manufacturer, that uniquely identifies it in any network it is connected to.<br>
+Depending on the hardware manufacturer, a MAC address could even expose information about the model of the device, but there are tools to spoof it as well.  </p>
+<h3 id="how-a-web-browser-behaves-when-a-user-types-httpswwwgooglecom-in-the-browser-from-a-network-perspective">How a web browser behaves when a user types "https://www.google.com" in the browser from a network perspective</h3>
+<p>Based on the previous content in this article, and other content, here is an overview of what happens when you type that address in a browser within your <strong>home router</strong>'s domain:<br>
+1. Local Device Lookup: The browser first checks its local cache to see if it already has the IP address for "www.google.com". This IP address is like the postal address for the website on the internet.<br>
+    - If the address wasn't in browser cache, the browser then asks the Operating System to find the IP address. The OS checks its own cache.
+    - If the address wasn't in OS cache, the OS looks at the local DNS resolver specified in its network settings. This is usually the IP address of your home router. The router checks its cache.
+    - If the address wasn't in the router's cache, it forwards the DNS query to the DNS server configured in its settings. This is known as a recursive DNS server (one such as the commonly used 8.8.8.8).
+    - The recursive DNS server first checks its cache. If the address is not cached already, it asks for help from the authoritative DNS hierarchy.
+        1. Since Google uses the .com domain, the DNS server first asks the root domain nameserver for the IP address of the .com TLD server.<br>
+        2. The recursive DNS server asks the TLD authoritative server where it can find the authoritative DNS server for www.google.com.<br>
+        3. Finally, The authoritative server for www.google.com is asked where to find www.google.com. The result is returned to the user.<br>
+2. TCP Connection: With the IP address known, the browser initiates a three-way TCP handshake with Google to establish a TCP connection. This involves sending a SYN packet and receiving a SYN-ACK packet in return, followed by sending an ACK packet back to the server.<br>
+3. TLS Handshake: Since the URL uses "https", a secure connection is required. The browser starts a TLS handshake with Google servers. This involves exchanging cryptographic keys and certificates to establish a secure connection.<br>
+4. HTTP Request: The browser sends an HTTP GET request over the secure connection to request the webpage at "www.google.com". This request is sent to a specific port, usually port 80 for HTTP or 443 for HTTPS.<br>
+5. NAT Translation: The router translates the private IP address of your computer to its own public IP address for all outbound packets, and keeps track of these translations in a NAT table. When it receives packets back from the Google, it uses the NAT table to translate the destination address back to the private IP address of your computer.  </p>
+<h3 id="sources">Sources</h3>
+<p><a href="https://www.cloudflare.com/learning/network-layer/what-is-a-router/">router</a> 
+<a href="https://whatismyipaddress.com/port-forwarding">port forwarding</a> and <a href="https://whatismyipaddress.com/port">ports</a><br>
+<a href="https://jodies.de/ipcalc">ip/cidr/netmask</a><br>
+<a href="https://avinetworks.com/glossary/subnet-mask">netmask</a><br>
+<a href="https://www.techtarget.com/whatis/definition/private-IP-address">private IPs</a> <br>
+<a href="https://www.cloudflare.com/learning/dns/what-is-dns/">DNS</a><br>
+<a href="https://umbrella.cisco.com/blog/what-is-the-difference-between-authoritative-and-recursive-dns-nameservers">DNS</a> <br>
+<a href="https://community.fs.com/article/router-vs-gateway-what-is-the-similarity-and-difference.html">router/gateway</a><br>
+<a href="https://www.techtarget.com/searchnetworking/answer/Difference-between-a-router-switch-and-a-hub">router/switch/hub</a> <br>
+<a href="https://whatismyipaddress.com/dhcp">DHCP</a> <br>
+<a href="https://www.mathworks.com/help/instrument/tcpip-and-udp-comparison.html">TCP/UDP</a> <br>
+<a href="https://aws.amazon.com/compare/the-difference-between-throughput-and-latency/">throughput/latency</a> <br>
+<a href="https://www.earthlink.net/blog/bandwidth-vs-latency/">bandwidth/latency</a>  </p>
+<h2 id="part-2-system-info-with-bash">Part 2 - System Info With Bash</h2>
+<p>Won't work for all systems, so not really valuable.</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+
+<span class="c1"># CPU</span>
+<span class="nv">cpu_model_name</span><span class="o">=</span><span class="k">$(</span>lscpu<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;^Model name&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $NF}&#39;</span>
+<span class="nv">cpu_clock_speed</span><span class="o">=</span><span class="k">$(</span>lscpu<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;^CPU MHz&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $NF}&#39;</span>
+<span class="nv">cpu_core_count</span><span class="o">=</span><span class="k">$(</span>lscpu<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;^CPU(s)&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $NF}&#39;</span>
+
+<span class="c1"># Memory</span>
+<span class="nv">memory_total</span><span class="o">=</span><span class="k">$(</span>free<span class="w"> </span>-mh<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Mem<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span>
+<span class="nv">memory_used</span><span class="o">=</span><span class="k">$(</span>free<span class="w"> </span>-mh<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Mem<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $3}&#39;</span><span class="k">)</span>
+<span class="nv">memory_free</span><span class="o">=</span><span class="k">$(</span>free<span class="w"> </span>-mh<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Mem<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $4}&#39;</span><span class="k">)</span>
+
+<span class="c1"># Disk</span>
+<span class="nv">disk_total</span><span class="o">=</span><span class="k">$(</span>df<span class="w"> </span>-h<span class="w"> </span>/<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span>
+<span class="nv">disk_used</span><span class="o">=</span><span class="k">$(</span>df<span class="w"> </span>-h<span class="w"> </span>/<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $3}&#39;</span><span class="k">)</span>
+<span class="nv">disk_free</span><span class="o">=</span><span class="k">$(</span>df<span class="w"> </span>-h<span class="w"> </span>/<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-1<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $4}&#39;</span><span class="k">)</span>
+
+<span class="c1"># Network</span>
+<span class="nv">network_ip</span><span class="o">=</span><span class="k">$(</span>hostname<span class="w"> </span>-I<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $1}&#39;</span><span class="k">)</span>
+<span class="nv">network_gateway</span><span class="o">=</span><span class="k">$(</span>route<span class="w"> </span>-n<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;^0.0.0.0&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span><span class="w"> </span>
+<span class="nv">network_dns</span><span class="o">=</span><span class="k">$(</span>cat<span class="w"> </span>/etc/resolv.conf<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;nameserver&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span>
+
+<span class="nb">echo</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;CPU     - model name: </span><span class="nv">$cpu_model_name</span><span class="s2"> clock speed: </span><span class="nv">$cpu_clock_speed</span><span class="s2"> core count: </span><span class="nv">$cpu_core_count</span><span class="s2">&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Memory  - total size: </span><span class="nv">$memory_total</span><span class="s2"> used size: </span><span class="nv">$memory_used</span><span class="s2"> free size: </span><span class="nv">$memory_free</span><span class="s2">&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Disk    - total size: </span><span class="nv">$disk_total</span><span class="s2"> used size: </span><span class="nv">$disk_used</span><span class="s2"> free size: </span><span class="nv">$disk_free</span><span class="s2">&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Network - IP address: </span><span class="nv">$network_ip</span><span class="s2"> gateway: </span><span class="nv">$network_gateway</span><span class="s2"> dns server: </span><span class="nv">$network_dns</span><span class="s2">&quot;</span>
+<span class="nb">echo</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span>-z<span class="w"> </span><span class="nv">$network_dns</span><span class="w"> </span><span class="o">]]</span>
+<span class="k">then</span>
+<span class="w">  </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+</code></pre></div>
+                    </section>
+                    <hr/>
+                    <aside class="post-meta">
+                        <p>Category: <a href="/blog/category/networking.html">Networking</a></p>
+                        <p>Tags: <a href="/blog/tag/networking.html">Networking</a>, <a href="/blog/tag/ip.html">IP</a>, <a href="/blog/tag/mac.html">MAC</a>, <a href="/blog/tag/router.html">Router</a>, </p>
+                    </aside>
+                    <hr/>
+                </article>
+            </li>
+        </ol>
+    </div>
+        </div>
+
+        <script src="/blog/theme/js/main.js"></script>
+    </body>
+</html>
