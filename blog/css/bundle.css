@@ -808,6 +808,13 @@ button:not(:-moz-focusring):focus > .main-nav__btn-box {
 	margin-bottom: 0;
 }
 
+.entry__content img {
+	display: block;
+    margin: auto;
+	padding-top: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
 .entry__meta {
 	font-size: .875rem;
 	color: #999;
