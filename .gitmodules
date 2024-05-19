@@ -1,0 +1,3 @@
+[submodule "hugo/themes/Binario"]
+	path = hugo/themes/Binario
+	url = https://github.com/Xosrov/Binario.git
