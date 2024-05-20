@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Concurrency on Alireza&#39;s Mindmap</title>
+    <link>http://localhost:1313/tags/concurrency/</link>
+    <description>Recent content in Concurrency on Alireza&#39;s Mindmap</description>
+    <generator>Hugo 0.125.1</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 18 Oct 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/concurrency/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Concurrency vs Parallelism</title>
+      <link>http://localhost:1313/distributed/parallelism-vs-concurrency/</link>
+      <pubDate>Wed, 18 Oct 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/distributed/parallelism-vs-concurrency/</guid>
+      <description>Differentiating concurrency and parallelism is confusing without understanding the underlying concepts first. This article aims to give you a pretty good understanding of the core concepts of concurrency, how it is handled by different programming languages, and gives some generic guidelines on when to use which.</description>
+    </item>
+  </channel>
+</rss>

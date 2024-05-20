@@ -3,7 +3,7 @@ title         = "Alireza's Mindmap"
 languageCode  = "en-us"
 paginate      = "10" # Number of elements per page in pagination
 theme         = "binario"
-publishDir    = ".."
+publishDir    = "../sites/blog"
 summarylength = 30
 
 [services]
