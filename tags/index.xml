@@ -2,94 +2,101 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Alireza&#39;s Mindmap</title>
-    <link>http://localhost:1313/tags/</link>
+    <link>https://xosrov.github.io/tags/</link>
     <description>Recent content in Tags on Alireza&#39;s Mindmap</description>
     <generator>Hugo 0.125.1</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 17 Nov 2023 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 21 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://xosrov.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Video</title>
+      <link>https://xosrov.github.io/tags/video/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://xosrov.github.io/tags/video/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Hub</title>
-      <link>http://localhost:1313/tags/hub/</link>
+      <link>https://xosrov.github.io/tags/hub/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/hub/</guid>
+      <guid>https://xosrov.github.io/tags/hub/</guid>
       <description></description>
     </item>
     <item>
       <title>Port</title>
-      <link>http://localhost:1313/tags/port/</link>
+      <link>https://xosrov.github.io/tags/port/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/port/</guid>
+      <guid>https://xosrov.github.io/tags/port/</guid>
       <description></description>
     </item>
     <item>
       <title>Switch</title>
-      <link>http://localhost:1313/tags/switch/</link>
+      <link>https://xosrov.github.io/tags/switch/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/switch/</guid>
+      <guid>https://xosrov.github.io/tags/switch/</guid>
       <description></description>
     </item>
     <item>
       <title>Tcp</title>
-      <link>http://localhost:1313/tags/tcp/</link>
+      <link>https://xosrov.github.io/tags/tcp/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/tcp/</guid>
+      <guid>https://xosrov.github.io/tags/tcp/</guid>
       <description></description>
     </item>
     <item>
       <title>Udp</title>
-      <link>http://localhost:1313/tags/udp/</link>
+      <link>https://xosrov.github.io/tags/udp/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/udp/</guid>
+      <guid>https://xosrov.github.io/tags/udp/</guid>
       <description></description>
     </item>
     <item>
       <title>Asyncio</title>
-      <link>http://localhost:1313/tags/asyncio/</link>
+      <link>https://xosrov.github.io/tags/asyncio/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/asyncio/</guid>
+      <guid>https://xosrov.github.io/tags/asyncio/</guid>
       <description></description>
     </item>
     <item>
       <title>Concurrency</title>
-      <link>http://localhost:1313/tags/concurrency/</link>
+      <link>https://xosrov.github.io/tags/concurrency/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/concurrency/</guid>
+      <guid>https://xosrov.github.io/tags/concurrency/</guid>
       <description></description>
     </item>
     <item>
       <title>Multicore</title>
-      <link>http://localhost:1313/tags/multicore/</link>
+      <link>https://xosrov.github.io/tags/multicore/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/multicore/</guid>
+      <guid>https://xosrov.github.io/tags/multicore/</guid>
       <description></description>
     </item>
     <item>
       <title>Multiprocessing</title>
-      <link>http://localhost:1313/tags/multiprocessing/</link>
+      <link>https://xosrov.github.io/tags/multiprocessing/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/multiprocessing/</guid>
+      <guid>https://xosrov.github.io/tags/multiprocessing/</guid>
       <description></description>
     </item>
     <item>
       <title>Multithreading</title>
-      <link>http://localhost:1313/tags/multithreading/</link>
+      <link>https://xosrov.github.io/tags/multithreading/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/multithreading/</guid>
+      <guid>https://xosrov.github.io/tags/multithreading/</guid>
       <description></description>
     </item>
     <item>
       <title>Parallelism</title>
-      <link>http://localhost:1313/tags/parallelism/</link>
+      <link>https://xosrov.github.io/tags/parallelism/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/parallelism/</guid>
+      <guid>https://xosrov.github.io/tags/parallelism/</guid>
       <description></description>
     </item>
     <item>
       <title>Compression</title>
-      <link>http://localhost:1313/tags/compression/</link>
+      <link>https://xosrov.github.io/tags/compression/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/compression/</guid>
+      <guid>https://xosrov.github.io/tags/compression/</guid>
       <description></description>
     </item>
   </channel>

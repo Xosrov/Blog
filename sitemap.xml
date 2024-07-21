@@ -2,97 +2,109 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/</loc>
+    <loc>https://xosrov.github.io/</loc>
+    <lastmod>2024-07-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://xosrov.github.io/categories/</loc>
+    <lastmod>2024-07-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://xosrov.github.io/categories/history/</loc>
+    <lastmod>2024-07-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://xosrov.github.io/multimedia/</loc>
+    <lastmod>2024-07-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://xosrov.github.io/categories/multimedia/</loc>
+    <lastmod>2024-07-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://xosrov.github.io/tags/</loc>
+    <lastmod>2024-07-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://xosrov.github.io/tags/video/</loc>
+    <lastmod>2024-07-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://xosrov.github.io/categories/video/</loc>
+    <lastmod>2024-07-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://xosrov.github.io/multimedia/video-part-1/</loc>
+    <lastmod>2024-07-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://xosrov.github.io/tags/hub/</loc>
     <lastmod>2023-11-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>https://xosrov.github.io/categories/ip/</loc>
     <lastmod>2023-11-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/hub/</loc>
+    <loc>https://xosrov.github.io/categories/mac/</loc>
     <lastmod>2023-11-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/ip/</loc>
+    <loc>https://xosrov.github.io/categories/networking/</loc>
     <lastmod>2023-11-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/mac/</loc>
+    <loc>https://xosrov.github.io/networking/networking---some-concepts/</loc>
     <lastmod>2023-11-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/networking/</loc>
+    <loc>https://xosrov.github.io/networking/</loc>
     <lastmod>2023-11-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/networking/networking---some-concepts/</loc>
+    <loc>https://xosrov.github.io/tags/port/</loc>
     <lastmod>2023-11-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/networking/</loc>
+    <loc>https://xosrov.github.io/categories/router/</loc>
     <lastmod>2023-11-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/port/</loc>
+    <loc>https://xosrov.github.io/tags/switch/</loc>
     <lastmod>2023-11-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/router/</loc>
+    <loc>https://xosrov.github.io/tags/tcp/</loc>
     <lastmod>2023-11-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/switch/</loc>
+    <loc>https://xosrov.github.io/tags/udp/</loc>
     <lastmod>2023-11-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/</loc>
-    <lastmod>2023-11-17T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/tcp/</loc>
-    <lastmod>2023-11-17T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/udp/</loc>
-    <lastmod>2023-11-17T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/asyncio/</loc>
+    <loc>https://xosrov.github.io/tags/asyncio/</loc>
     <lastmod>2023-10-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/concurrency/</loc>
+    <loc>https://xosrov.github.io/tags/concurrency/</loc>
     <lastmod>2023-10-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/concurrency/</loc>
+    <loc>https://xosrov.github.io/categories/concurrency/</loc>
     <lastmod>2023-10-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/distributed/parallelism-vs-concurrency/</loc>
+    <loc>https://xosrov.github.io/distributed/parallelism-vs-concurrency/</loc>
     <lastmod>2023-10-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/distributed/</loc>
+    <loc>https://xosrov.github.io/categories/distributed/</loc>
     <lastmod>2023-10-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/distributed/</loc>
+    <loc>https://xosrov.github.io/distributed/</loc>
     <lastmod>2023-10-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/multicore/</loc>
+    <loc>https://xosrov.github.io/tags/multicore/</loc>
     <lastmod>2023-10-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/multiprocessing/</loc>
+    <loc>https://xosrov.github.io/tags/multiprocessing/</loc>
     <lastmod>2023-10-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/multithreading/</loc>
+    <loc>https://xosrov.github.io/tags/multithreading/</loc>
     <lastmod>2023-10-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/parallelism/</loc>
+    <loc>https://xosrov.github.io/tags/parallelism/</loc>
     <lastmod>2023-10-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/parallelism/</loc>
+    <loc>https://xosrov.github.io/categories/parallelism/</loc>
     <lastmod>2023-10-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/compression/</loc>
+    <loc>https://xosrov.github.io/tags/compression/</loc>
     <lastmod>2023-10-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/dct/</loc>
+    <loc>https://xosrov.github.io/categories/dct/</loc>
     <lastmod>2023-10-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/multimedia/fourier-transforms-and-jpeg-compression/</loc>
+    <loc>https://xosrov.github.io/multimedia/fourier-transforms-and-jpeg-compression/</loc>
     <lastmod>2023-10-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/jpeg/</loc>
-    <lastmod>2023-10-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/multimedia/</loc>
-    <lastmod>2023-10-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/categories/multimedia/</loc>
+    <loc>https://xosrov.github.io/categories/jpeg/</loc>
     <lastmod>2023-10-16T00:00:00+00:00</lastmod>
   </url>
 </urlset>
