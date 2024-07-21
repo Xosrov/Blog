@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Video on Alireza&#39;s Mindmap</title>
+    <link>https://xosrov.github.io/categories/video/</link>
+    <description>Recent content in Video on Alireza&#39;s Mindmap</description>
+    <generator>Hugo 0.125.1</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 21 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://xosrov.github.io/categories/video/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Video Basics Part 1 - Intro &amp; Short History</title>
+      <link>https://xosrov.github.io/multimedia/video-part-1/</link>
+      <pubDate>Sun, 21 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>https://xosrov.github.io/multimedia/video-part-1/</guid>
+      <description>First part of series on Video-related concepts that I&amp;rsquo;ve learned and am learning over time.</description>
+    </item>
+  </channel>
+</rss>
